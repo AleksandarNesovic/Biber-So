@@ -3,6 +3,7 @@ package com.nesovic.Telnet.resource;
 import java.net.URI;
 
 
+
 import java.util.ArrayList;
 
 import javax.ws.rs.Consumes;
@@ -18,50 +19,55 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import com.nesovic.Telnet.controller.MainMealController;
-import com.nesovic.Telnet.model.Main_meal;
+import com.nesovic.Telnet.controller.MealController;
+import com.nesovic.Telnet.model.Meal;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.SwaggerDefinition;
 import io.swagger.annotations.Tag;
 
-@Path("/mainmeal")
+@Path("/meal")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Api("/Glavno jelo")
-@SwaggerDefinition(tags= {@Tag(name="/Glavno jelo",description="REST Endpoints for Glavno jelo")})
-public class Glavno_jeloResource {
+@Api("/meal")
+@SwaggerDefinition(tags= {@Tag(name="/meal",description="REST Endpoints for Meals")})
+public class MealResource {
 
-	MainMealController controller=new MainMealController();
+	MealController controller=new MealController();
 	
 	@GET
-	public ArrayList<Main_meal> getJela(){
+	public ArrayList<Meal> getMeal(){
 		return controller.getInstance().selectMeal();
 	}
 	@GET
 	@Path("/{id}")
-	public Main_meal getJeloById(@PathParam("id") int id) {
+	public Meal getMealById(@PathParam("id") int id) {
 		return controller.getInstance().selectMealById(id);
 	}
+	@GET
+	@Path("/category/{id}")
+	public ArrayList<Meal> getMealByCategory(@PathParam("id") int id) {
+		return controller.getInstance().selectMealByCategory(id);
+	}
 	@POST
-	public Response addJelo(Main_meal g,@Context UriInfo uriInfo) {
-		Main_meal glavnoJelo=controller.getInstance().insertMeal(g);
-		String idJela=String.valueOf(glavnoJelo.getMain_id());
+	public Response addMeal(Meal g,@Context UriInfo uriInfo) {
+		Meal glavnoJelo=controller.getInstance().insertMeal(g);
+		String idJela=String.valueOf(glavnoJelo.getMeal_id());
 		URI uri=uriInfo.getAbsolutePathBuilder().path(idJela).build();
 		return Response.created(uri).entity(glavnoJelo).build();
 	}
 	@DELETE
 	@Path("/{id}")
-	public Response deleteJelo(@PathParam("id") int id) {
+	public Response deleteMeal(@PathParam("id") int id) {
 		controller.getInstance().deleteMeal(id);
 		return Response.noContent().build();
 	}
 	@PUT
 	@Path("/{id}")
-	public Response updateJelo(@PathParam("id") int id,Main_meal g,@Context UriInfo uriInfo) {
-		g.setMain_id(id);
+	public Response updateMeal(@PathParam("id") int id,Meal g,@Context UriInfo uriInfo) {
+		g.setMeal_id(id);
 		controller.getInstance().updateMeal(g);
-		String idJela=String.valueOf(g.getMain_id());
+		String idJela=String.valueOf(g.getMeal_id());
 		URI uri=uriInfo.getAbsolutePathBuilder().path(idJela).build();
 		return Response.created(uri).entity(g).build();
 	}

@@ -35,8 +35,8 @@ import io.swagger.annotations.Tag;
 @Path("/clients")
 @Produces({MediaType.APPLICATION_JSON,MediaType.APPLICATION_XML})
 @Consumes({MediaType.APPLICATION_JSON,MediaType.APPLICATION_XML})
-@Api("/Clients")
-@SwaggerDefinition(tags= {@Tag(name="/Clients",description="REST Endpoints for Clients")})
+@Api("/clients")
+@SwaggerDefinition(tags= {@Tag(name="/clients",description="REST Endpoints for Clients")})
 public class ClientResource {
 	
 	ClientController controller=new ClientController();
@@ -60,13 +60,13 @@ public class ClientResource {
 
 	@DELETE
 	@Path("/{id}")
-	public Response deleteKlijent(@PathParam("id") int id) {
+	public Response deleteClient(@PathParam("id") int id) {
 		controller.getInstance().deleteClient(id);
 		return Response.noContent().build();
 	}
 	@PUT
 	@Path("/{id}")
-	public Response updateKlijent(@PathParam("id") int id,Clients c,@Context UriInfo uriInfo) {
+	public Response updateClient(@PathParam("id") int id,Clients c,@Context UriInfo uriInfo) {
 		c.setClient_id(id);
 		controller.getInstance().updateClient(c);
 		String idKlijent=String.valueOf(c.getClient_id());

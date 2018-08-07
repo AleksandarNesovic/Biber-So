@@ -16,7 +16,7 @@ public class Bootstrap extends HttpServlet{
 		super.init(config);
 		BeanConfig beanConfig=new BeanConfig();
 		//beanConfig.setBasePath("/webapi/");
-		beanConfig.setBasePath("/webapi/");
+		beanConfig.setBasePath("biberSo/webapi/");
 		//beanConfig.setHost("biber-so.herokuapp.com/");
 		beanConfig.setHost("localhost:8080");
 		beanConfig.setTitle("Narudzbina app Swagger Docs");

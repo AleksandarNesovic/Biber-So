@@ -138,19 +138,19 @@ public class ClientsDAO {
 			client.setLastname(resultSet.getString(3));
 			client.setUsername(resultSet.getString(4));
 			client.setPassword(resultSet.getString(5));
-			client.setEmail(resultSet.getString(6));
-			client.setRole(resultSet.getString(7));
+			client.setRole(resultSet.getString(6));
+			client.setEmail(resultSet.getString(7));
 		}
-		
 		String userPassword=client.getPassword();
-		if(userPassword.equals(password)) {
-			client.setPassword(userPassword);
+		if(password.equals(userPassword)) {
+			client.setPassword(password);
 		}else {
 			System.out.println("Pogresna sifra!");
 			throw new AuthFaildException();
 		}
 		close();
 		return client;
+		
 	}
 	private static String encryptPassword(String password) {
 		String sha1 = "";

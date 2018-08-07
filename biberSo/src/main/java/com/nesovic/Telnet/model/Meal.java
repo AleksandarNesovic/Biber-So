@@ -1,27 +1,40 @@
 package com.nesovic.Telnet.model;
 
-public class Dessert {
+public class Meal {
 	
-	private int dessert_id;
+	private int meal_id;
+	private Category category;
 	private String name;
 	private double price;
 	private String link;
-	public Dessert() {
+	public Meal() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-	public Dessert(String name, double price, String link) {
+
+	public Category getCategory() {
+		return category;
+	}
+
+	public void setCategory(Category category_id) {
+		this.category = category_id;
+	}
+
+	public Meal(Category category_id, String name, double price, String link) {
 		super();
+		this.category = category_id;
 		this.name = name;
 		this.price = price;
 		this.link = link;
 	}
-	public int getDessert_id() {
-		return dessert_id;
+
+	public int getMeal_id() {
+		return meal_id;
 	}
-	public void setDessert_id(int dessert_id) {
-		this.dessert_id = dessert_id;
+	public void setMeal_id(int meal_id) {
+		this.meal_id = meal_id;
 	}
+	
 	public String getName() {
 		return name;
 	}

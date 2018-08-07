@@ -21,6 +21,7 @@ public class LoginService extends Application{
 	
 	public String Login(Credentials crd) throws ClassNotFoundException, SQLException, AuthFaildException {
 		Clients client=dao.Login(crd);
+		System.out.println(client);
 		String jwt="";
 		if(client.getUsername()!="") {
 			Long time=System.currentTimeMillis();
@@ -29,7 +30,7 @@ public class LoginService extends Application{
 					.claim("name",client.getName())
 					.claim("lastname", client.getLastname())
 					.claim("role", client.getRole())
-					.setExpiration(new Date(time+90000))
+					.setExpiration(new Date(time+900000))
 					.signWith(SignatureAlgorithm.HS256, "password".getBytes())
 					.compact();
 		//	json=Json.createObjectBuilder().add(jwt).build();
