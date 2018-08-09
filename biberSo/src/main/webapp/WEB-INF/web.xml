@@ -14,7 +14,7 @@
     <servlet>
         <servlet-name>SwaggerBootstrap</servlet-name>
         <servlet-class>com.nesovic.Telnet.swagger.Bootstrap</servlet-class>
-        <load-on-startup>2</load-on-startup>
+        <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet-mapping>
         <servlet-name>Jersey Web Application</servlet-name>

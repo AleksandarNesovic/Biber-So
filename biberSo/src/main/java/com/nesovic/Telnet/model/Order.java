@@ -7,18 +7,30 @@ public class Order {
 	private int quantity;
 	private double order_price;
 	private String order_date;
+	private boolean piece;
 	public Order() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-	public Order(Clients client, Meal meal, int quantity, double order_price, String order_date) {
+	
+	public boolean isPiece() {
+		return piece;
+	}
+
+	public void setPiece(boolean piece) {
+		this.piece = piece;
+	}
+
+	public Order(Clients client, Meal meal, int quantity, double order_price, String order_date, boolean piece) {
 		super();
 		this.client = client;
 		this.meal = meal;
 		this.quantity = quantity;
 		this.order_price = order_price;
 		this.order_date = order_date;
+		this.piece = piece;
 	}
+
 	public int getOrder_id() {
 		return order_id;
 	}

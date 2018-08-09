@@ -1,5 +1,6 @@
 package com.nesovic.Telnet.controller;
 
+
 import java.util.ArrayList;
 
 import com.nesovic.Telnet.DAO.OrdersDAO;
@@ -22,6 +23,9 @@ public class OrdersController {
 	
 	public static ArrayList<Order> selectOrders(){
 		return dao.selectOrders();
+	}
+	public static ArrayList<Order> selectOrdersByDate(String date){
+		return dao.selectOrdersByDate(date);
 	}
 	public static Order selectOrderById(int id) {
 		return dao.selectOrderById(id);

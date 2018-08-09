@@ -41,6 +41,11 @@ public class OrdersResource {
 		return controller.getInstance().selectOrders();
 	}
 	@GET
+	@Path("/date/{date}")
+	public ArrayList<Order> getOrdersByDate(@PathParam("date") String date){
+		return controller.getInstance().selectOrdersByDate(date);
+	}
+	@GET
 	@Path("/{id}")
 	public Order getOrdersById(@PathParam("id") int id) {
 		return controller.getInstance().selectOrderById(id);
