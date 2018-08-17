@@ -39,20 +39,25 @@ import io.swagger.annotations.Tag;
 @SwaggerDefinition(tags= {@Tag(name="/clients",description="REST Endpoints for Clients")})
 public class ClientResource {
 	
-	ClientController controller=new ClientController();
+	ClientController controller=ClientController.getInstance();
 	
 	@GET
 	public ArrayList<Clients> getClients(){
-		return controller.getInstance().selectClients();
+		return controller.selectClients();
+	}
+	@GET
+	@Path("/user/{username}")
+	public ArrayList<Clients> getClientsByUsername(@PathParam("username") String username){
+		return controller.selectClientsByUsername(username);
 	}
 	@GET
 	@Path("/{id}")
 	public Clients getClientById(@PathParam("id") int id) {
-		return controller.getInstance().selectClientById(id);
+		return controller.selectClientById(id);
 	}
 	@POST
 	public Response addClient(Clients c,@Context UriInfo uriInfo) {
-		Clients noviKlijent=controller.getInstance().insertClient(c);
+		Clients noviKlijent=controller.insertClient(c);
 		String idKlijenta=String.valueOf(noviKlijent.getClient_id());
 		URI uri=uriInfo.getAbsolutePathBuilder().path(idKlijenta).build();
 		return Response.created(uri).entity(noviKlijent).build();
@@ -61,14 +66,14 @@ public class ClientResource {
 	@DELETE
 	@Path("/{id}")
 	public Response deleteClient(@PathParam("id") int id) {
-		controller.getInstance().deleteClient(id);
+		controller.deleteClient(id);
 		return Response.noContent().build();
 	}
 	@PUT
 	@Path("/{id}")
 	public Response updateClient(@PathParam("id") int id,Clients c,@Context UriInfo uriInfo) {
 		c.setClient_id(id);
-		controller.getInstance().updateClient(c);
+		controller.updateClient(c);
 		String idKlijent=String.valueOf(c.getClient_id());
 		URI uri=uriInfo.getAbsolutePathBuilder().path(idKlijent).build();
 		return Response.created(uri).entity(c).build();

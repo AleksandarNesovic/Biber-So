@@ -11,7 +11,7 @@ public class ClientController {
  
 	private static ClientController controller;
 
-	public ClientController() {
+	private ClientController() {
 		super();
 	}
 	public static ClientController getInstance() {
@@ -34,5 +34,8 @@ public class ClientController {
 	}
 	public static void deleteClient(int id) {
 		dc.deleteClient(id);
+	}
+	public static ArrayList<Clients> selectClientsByUsername(String username){
+		return dc.selectClientsByUsername(username);
 	}
 }

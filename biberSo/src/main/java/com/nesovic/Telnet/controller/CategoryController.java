@@ -9,7 +9,7 @@ public class CategoryController {
 
 	private static CategoryController controller;
 
-	public CategoryController() {
+	private CategoryController() {
 		super();
 	}
 	public static CategoryController getInstance() {

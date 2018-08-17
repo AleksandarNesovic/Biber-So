@@ -51,6 +51,32 @@ public class ClientsDAO {
 		close();
 		return lista;
 	}
+	public ArrayList<Clients> selectClientsByUsername(String username){
+		ArrayList<Clients> lista=new ArrayList<>();
+		Clients client=null;
+
+		try {
+			conn = DatabaseConnector.connect();
+			preparedStatement=conn.prepareStatement("SELECT * FROM clients where username like'"+username+"%'");
+			preparedStatement.execute();
+			resultSet=preparedStatement.getResultSet();
+			while(resultSet.next()) {
+				client=new Clients();
+				client.setClient_id(resultSet.getInt(1));
+				client.setName(resultSet.getString(2));
+				client.setLastname(resultSet.getString(3));
+				client.setUsername(resultSet.getString(4));
+				client.setPassword(resultSet.getString(5));
+				client.setEmail(resultSet.getString(6));
+				client.setRole(resultSet.getString(7));
+				lista.add(client);
+			}
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		}
+		close();
+		return lista;
+	}
 	public Clients selectClientsById(int id){
 		Clients client=null;
 

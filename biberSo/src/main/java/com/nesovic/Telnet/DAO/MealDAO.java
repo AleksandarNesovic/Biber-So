@@ -49,6 +49,35 @@ public class MealDAO {
 		close();
 		return lista;
 	}
+	public ArrayList<Meal> scrollMeal(int offset){
+		ArrayList<Meal> lista=new ArrayList<>();
+		Meal meal=null;
+		CategoryDAO dao=new CategoryDAO();
+
+		try {
+			conn = DatabaseConnector.connect();
+			preparedStatement=conn.prepareStatement("SELECT * FROM meals OFFSET ? ROWS FETCH NEXT 10 ROWS ONLY");
+			preparedStatement.setInt(1, offset);
+			preparedStatement.execute();
+			resultSet=preparedStatement.getResultSet();
+			while(resultSet.next()) {
+				meal=new Meal();
+				meal.setMeal_id(resultSet.getInt(1));
+				
+				Category category=dao.selectCategoryById(resultSet.getInt(2));
+				meal.setCategory(category);
+				
+				meal.setName(resultSet.getString(3));
+				meal.setPrice(resultSet.getDouble(4));
+				meal.setLink(resultSet.getString(5));
+				lista.add(meal);
+			}
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		}
+		close();
+		return lista;
+	}
 	public ArrayList<Meal> selectMealByPrice(){
 		ArrayList<Meal> lista=new ArrayList<>();
 		Meal meal=null;
@@ -86,6 +115,36 @@ public class MealDAO {
 			conn = DatabaseConnector.connect();
 			preparedStatement=conn.prepareStatement("SELECT * FROM meals where category_id=?");
 			preparedStatement.setInt(1, id);
+			preparedStatement.execute();
+			resultSet=preparedStatement.getResultSet();
+			while(resultSet.next()) {
+				meal=new Meal();
+				meal.setMeal_id(resultSet.getInt(1));
+				
+				Category category=dao.selectCategoryById(resultSet.getInt(2));
+				meal.setCategory(category);
+				
+				meal.setName(resultSet.getString(3));
+				meal.setPrice(resultSet.getDouble(4));
+				meal.setLink(resultSet.getString(5));
+				lista.add(meal);
+			}
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		}
+		close();
+		return lista;
+	}
+	public ArrayList<Meal> scrollMealByCategory(int id,int offset){
+		ArrayList<Meal> lista=new ArrayList<>();
+		Meal meal=null;
+		CategoryDAO dao=new CategoryDAO();
+
+		try {
+			conn = DatabaseConnector.connect();
+			preparedStatement=conn.prepareStatement("SELECT * FROM meals where category_id=? OFFSET ? ROWS FETCH NEXT 5 ROWS ONLY");
+			preparedStatement.setInt(1, id);
+			preparedStatement.setInt(2, offset);
 			preparedStatement.execute();
 			resultSet=preparedStatement.getResultSet();
 			while(resultSet.next()) {

@@ -10,7 +10,7 @@ public class MealController {
 
 	private static MealController controller;
 
-	public MealController() {
+	private MealController() {
 		super();
 	}
 	public static MealController getInstance() {
@@ -36,6 +36,12 @@ public class MealController {
 	}
 	public static void deleteMeal(int id) {
 		dm.deleteMeal(id);
+	}
+	public static ArrayList<Meal> scrollMeal(int offset){
+		return dm.scrollMeal(offset);
+	}
+	public static ArrayList<Meal> scrollMealBycategory(int id,int offset){
+		return dm.scrollMealByCategory(id, offset);
 	}
 	
 }

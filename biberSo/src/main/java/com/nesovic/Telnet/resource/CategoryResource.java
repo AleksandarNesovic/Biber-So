@@ -30,20 +30,20 @@ import io.swagger.annotations.Tag;
 @SwaggerDefinition(tags= {@Tag(name="/category",description="REST Endpoints for Kategorije")})
 public class CategoryResource {
 
-	CategoryController controller=new CategoryController();
+	CategoryController controller=CategoryController.getInstance();
 	
 	@GET
 	public ArrayList<Category> getCategory(){
-		return controller.getInstance().selectCategory();
+		return controller.selectCategory();
 	}
 	@GET
 	@Path("/{id}")
 	public Category getCategoryById(@PathParam("id") int id) {
-		return controller.getInstance().selectCategoryById(id);
+		return controller.selectCategoryById(id);
 	}
 	@POST
 	public Response addCategory(Category c,@Context UriInfo uriInfo) {
-		Category category=controller.getInstance().insertCategory(c);
+		Category category=controller.insertCategory(c);
 		String category_id=String.valueOf(category.getCategory_id());
 		URI uri=uriInfo.getAbsolutePathBuilder().path(category_id).build();
 		return Response.created(uri).entity(category).build();
@@ -52,14 +52,14 @@ public class CategoryResource {
 	@DELETE
 	@Path("/{id}")
 	public Response deleteCategory(@PathParam("id") int id) {
-		controller.getInstance().deleteCategory(id);
+		controller.deleteCategory(id);
 		return Response.noContent().build();
 	}
 	@PUT
 	@Path("/{id}")
 	public Response updateCategory(@PathParam("id") int id,Category c,@Context UriInfo uriInfo) {
 		c.setCategory_id(id);
-		controller.getInstance().updateCategory(c);
+		controller.updateCategory(c);
 		String category_id=String.valueOf(c.getCategory_id());
 		URI uri=uriInfo.getAbsolutePathBuilder().path(category_id).build();
 		return Response.created(uri).entity(c).build();

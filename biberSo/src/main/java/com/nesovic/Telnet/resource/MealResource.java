@@ -14,6 +14,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -33,25 +34,35 @@ import io.swagger.annotations.Tag;
 @SwaggerDefinition(tags= {@Tag(name="/meal",description="REST Endpoints for Meals")})
 public class MealResource {
 
-	MealController controller=new MealController();
+	MealController controller=MealController.getInstance();
 	
 	@GET
 	public ArrayList<Meal> getMeal(){
-		return controller.getInstance().selectMeal();
+		return controller.selectMeal();
+	}
+	@GET
+	@Path("/scroll")
+	public ArrayList<Meal> getScrollMeal(@QueryParam("offset") int offset){
+		return controller.scrollMeal(offset);
 	}
 	@GET
 	@Path("/{id}")
 	public Meal getMealById(@PathParam("id") int id) {
-		return controller.getInstance().selectMealById(id);
+		return controller.selectMealById(id);
 	}
 	@GET
 	@Path("/category/{id}")
 	public ArrayList<Meal> getMealByCategory(@PathParam("id") int id) {
-		return controller.getInstance().selectMealByCategory(id);
+		return controller.selectMealByCategory(id);
+	}
+	@GET
+	@Path("/category/{id}/scroll")
+	public ArrayList<Meal> getScrollMealByCategory(@PathParam("id") int id, @QueryParam("offset") int offset) {
+		return controller.scrollMealBycategory(id, offset);
 	}
 	@POST
 	public Response addMeal(Meal g,@Context UriInfo uriInfo) {
-		Meal glavnoJelo=controller.getInstance().insertMeal(g);
+		Meal glavnoJelo=controller.insertMeal(g);
 		String idJela=String.valueOf(glavnoJelo.getMeal_id());
 		URI uri=uriInfo.getAbsolutePathBuilder().path(idJela).build();
 		return Response.created(uri).entity(glavnoJelo).build();
@@ -59,14 +70,14 @@ public class MealResource {
 	@DELETE
 	@Path("/{id}")
 	public Response deleteMeal(@PathParam("id") int id) {
-		controller.getInstance().deleteMeal(id);
+		controller.deleteMeal(id);
 		return Response.noContent().build();
 	}
 	@PUT
 	@Path("/{id}")
 	public Response updateMeal(@PathParam("id") int id,Meal g,@Context UriInfo uriInfo) {
 		g.setMeal_id(id);
-		controller.getInstance().updateMeal(g);
+		controller.updateMeal(g);
 		String idJela=String.valueOf(g.getMeal_id());
 		URI uri=uriInfo.getAbsolutePathBuilder().path(idJela).build();
 		return Response.created(uri).entity(g).build();

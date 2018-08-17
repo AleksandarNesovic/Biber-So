@@ -10,7 +10,7 @@ public class OrdersController {
 	
 	private static OrdersController controller;
 
-	public OrdersController() {
+	private OrdersController() {
 		super();
 	}
 	
@@ -38,5 +38,17 @@ public class OrdersController {
 	}
 	public static void deleteOrder(int id) {
 		dao.deleteOrder(id);
+	}
+	public static ArrayList<Order> OrdersScrollList(int offset){
+		return dao.OrdersScrollList(offset);
+	}
+	public static ArrayList<Order> ScrollOrdersByDate(int offset,String date){
+		return dao.ScrollOrdersByDate(offset, date);
+	}
+	public static ArrayList<Order> ScrollOrdersByPeriod(int offset,String startDate,String endDate){
+		return dao.ScrollOrdersByPeriod(offset, startDate, endDate);
+	}
+	public ArrayList<Order> ScrollOrdersCombination(int offset,String startDate,String endDate,int id){
+		return dao.ScrollOrdersCombination(offset, startDate, endDate, id);
 	}
 }

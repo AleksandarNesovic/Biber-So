@@ -15,16 +15,16 @@ public class Bootstrap extends HttpServlet{
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
 		BeanConfig beanConfig=new BeanConfig();
-		//beanConfig.setBasePath("/webapi/");
-		beanConfig.setBasePath("/biberSo/webapi/");
-		//beanConfig.setHost("biber-so.herokuapp.com/");
-		beanConfig.setHost("localhost:8080");
+		beanConfig.setBasePath("/");
+		//beanConfig.setBasePath("/biberSo/webapi/");
+		beanConfig.setHost("biber-so.herokuapp.com/webapi");
+		//beanConfig.setHost("localhost:8080");
 		beanConfig.setTitle("Narudzbina app Swagger Docs");
 		beanConfig.setResourcePackage("com.nesovic.Telnet");
 		beanConfig.setPrettyPrint(true);
 		beanConfig.setScan(true);
-		//beanConfig.setSchemes(new String[] {"https"});
-		beanConfig.setSchemes(new String[] {"http"});
+		beanConfig.setSchemes(new String[] {"https"});
+		//beanConfig.setSchemes(new String[] {"http"});
 		beanConfig.setVersion("1.0");
 	}
 }
