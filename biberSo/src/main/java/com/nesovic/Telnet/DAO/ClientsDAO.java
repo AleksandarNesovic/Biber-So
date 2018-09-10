@@ -41,8 +41,8 @@ public class ClientsDAO {
 				client.setLastname(resultSet.getString(3));
 				client.setUsername(resultSet.getString(4));
 				client.setPassword(resultSet.getString(5));
-				client.setEmail(resultSet.getString(6));
-				client.setRole(resultSet.getString(7));
+				client.setEmail(resultSet.getString(7));
+				client.setRole(resultSet.getString(6));
 				lista.add(client);
 			}
 		} catch (ClassNotFoundException | SQLException e) {
@@ -57,7 +57,7 @@ public class ClientsDAO {
 
 		try {
 			conn = DatabaseConnector.connect();
-			preparedStatement=conn.prepareStatement("SELECT * FROM clients where username like'"+username+"%'");
+			preparedStatement=conn.prepareStatement("SELECT * FROM clients where lower(username) like'"+username+"%'");
 			preparedStatement.execute();
 			resultSet=preparedStatement.getResultSet();
 			while(resultSet.next()) {
@@ -67,8 +67,8 @@ public class ClientsDAO {
 				client.setLastname(resultSet.getString(3));
 				client.setUsername(resultSet.getString(4));
 				client.setPassword(resultSet.getString(5));
-				client.setEmail(resultSet.getString(6));
-				client.setRole(resultSet.getString(7));
+				client.setEmail(resultSet.getString(7));
+				client.setRole(resultSet.getString(6));
 				lista.add(client);
 			}
 		} catch (ClassNotFoundException | SQLException e) {
@@ -93,8 +93,8 @@ public class ClientsDAO {
 				client.setLastname(resultSet.getString(3));
 				client.setUsername(resultSet.getString(4));
 				client.setPassword(resultSet.getString(5));
-				client.setEmail(resultSet.getString(6));
-				client.setRole(resultSet.getString(7));
+				client.setEmail(resultSet.getString(7));
+				client.setRole(resultSet.getString(6));
 			}
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
@@ -105,13 +105,13 @@ public class ClientsDAO {
 	public Clients insertClient(Clients c){
 		try {
 			conn = DatabaseConnector.connect();
-			preparedStatement=conn.prepareStatement("insert into clients(name,lastname,username,password,email,role) values (?,?,?,?,?,?)");
+			preparedStatement=conn.prepareStatement("insert into clients(name,lastname,username,password,role,email) values (?,?,?,?,?,?)");
 			preparedStatement.setString(1, c.getName());
 			preparedStatement.setString(2, c.getLastname());
 			preparedStatement.setString(3, c.getUsername());
 			preparedStatement.setString(4, encryptPassword(c.getPassword()));
-			preparedStatement.setString(5, c.getEmail());
-			preparedStatement.setString(6, c.getRole());
+			preparedStatement.setString(6, c.getEmail());
+			preparedStatement.setString(5, c.getRole());
 			preparedStatement.execute();
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
@@ -122,13 +122,13 @@ public class ClientsDAO {
 	public Clients updateClient(Clients c){
 		try {
 			conn = DatabaseConnector.connect();
-			preparedStatement=conn.prepareStatement("update clients set name=?,lastname=?,username=?,password=?,email=?,role=? where client_id=?");
+			preparedStatement=conn.prepareStatement("update clients set name=?,lastname=?,username=?,password=?,role=?,email=? where client_id=?");
 			preparedStatement.setString(1, c.getName());
 			preparedStatement.setString(2, c.getLastname());
 			preparedStatement.setString(3, c.getUsername());
 			preparedStatement.setString(4, encryptPassword(c.getPassword()));
-			preparedStatement.setString(5, c.getEmail());
-			preparedStatement.setString(6, c.getRole());
+			preparedStatement.setString(6, c.getEmail());
+			preparedStatement.setString(5, c.getRole());
 			preparedStatement.setInt(7, c.getClient_id());
 			preparedStatement.execute();
 		} catch (ClassNotFoundException | SQLException e) {

@@ -41,6 +41,7 @@ public class MealDAO {
 				meal.setName(resultSet.getString(3));
 				meal.setPrice(resultSet.getDouble(4));
 				meal.setLink(resultSet.getString(5));
+				meal.setPiece(resultSet.getBoolean(6));
 				lista.add(meal);
 			}
 		} catch (ClassNotFoundException | SQLException e) {
@@ -70,6 +71,7 @@ public class MealDAO {
 				meal.setName(resultSet.getString(3));
 				meal.setPrice(resultSet.getDouble(4));
 				meal.setLink(resultSet.getString(5));
+				meal.setPiece(resultSet.getBoolean(6));
 				lista.add(meal);
 			}
 		} catch (ClassNotFoundException | SQLException e) {
@@ -98,6 +100,7 @@ public class MealDAO {
 				meal.setName(resultSet.getString(3));
 				meal.setPrice(resultSet.getDouble(4));
 				meal.setLink(resultSet.getString(5));
+				meal.setPiece(resultSet.getBoolean(6));
 				lista.add(meal);
 			}
 		} catch (ClassNotFoundException | SQLException e) {
@@ -127,6 +130,7 @@ public class MealDAO {
 				meal.setName(resultSet.getString(3));
 				meal.setPrice(resultSet.getDouble(4));
 				meal.setLink(resultSet.getString(5));
+				meal.setPiece(resultSet.getBoolean(6));
 				lista.add(meal);
 			}
 		} catch (ClassNotFoundException | SQLException e) {
@@ -157,6 +161,7 @@ public class MealDAO {
 				meal.setName(resultSet.getString(3));
 				meal.setPrice(resultSet.getDouble(4));
 				meal.setLink(resultSet.getString(5));
+				meal.setPiece(resultSet.getBoolean(6));
 				lista.add(meal);
 			}
 		} catch (ClassNotFoundException | SQLException e) {
@@ -185,6 +190,7 @@ public class MealDAO {
 				meal.setName(resultSet.getString(3));
 				meal.setPrice(resultSet.getDouble(4));
 				meal.setLink(resultSet.getString(5));
+				meal.setPiece(resultSet.getBoolean(6));
 			}
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
@@ -196,11 +202,12 @@ public class MealDAO {
 
 		try {
 			conn = DatabaseConnector.connect();
-			preparedStatement=conn.prepareStatement("insert into meals(category_id,name,price,link) values (?,?,?,?)");
+			preparedStatement=conn.prepareStatement("insert into meals(category_id,name,price,link,piece) values (?,?,?,?,?)");
 			preparedStatement.setInt(1, g.getCategory().getCategory_id());
 			preparedStatement.setString(2, g.getName());
 			preparedStatement.setDouble(3, g.getPrice());
 			preparedStatement.setString(4, g.getLink());
+			preparedStatement.setBoolean(5, g.isPiece());
 			preparedStatement.execute();
 
 		} catch (ClassNotFoundException | SQLException e) {
@@ -213,12 +220,13 @@ public class MealDAO {
 
 		try {
 			conn = DatabaseConnector.connect();
-			preparedStatement=conn.prepareStatement("update meals set category_id=?,name=?,price=?,link=? where meal_id=?");
+			preparedStatement=conn.prepareStatement("update meals set category_id=?,name=?,price=?,link=?,piece=? where meal_id=?");
 			preparedStatement.setInt(1, g.getCategory().getCategory_id());
 			preparedStatement.setString(2, g.getName());
 			preparedStatement.setDouble(3, g.getPrice());
 			preparedStatement.setString(4, g.getLink());
-			preparedStatement.setInt(5, g.getMeal_id());
+			preparedStatement.setBoolean(5, g.isPiece());
+			preparedStatement.setInt(6, g.getMeal_id());
 			preparedStatement.execute();
 
 		} catch (ClassNotFoundException | SQLException e) {

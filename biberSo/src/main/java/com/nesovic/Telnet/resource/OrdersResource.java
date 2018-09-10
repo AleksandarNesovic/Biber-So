@@ -2,8 +2,11 @@ package com.nesovic.Telnet.resource;
 
 
 import java.net.URI;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 import javax.json.bind.serializer.JsonbDeserializer;
 import javax.ws.rs.Consumes;
@@ -28,6 +31,7 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.nesovic.Telnet.DAO.ClientsDAO;
 import com.nesovic.Telnet.annotations.Secured;
 import com.nesovic.Telnet.controller.OrdersController;
+import com.nesovic.Telnet.model.Clients;
 import com.nesovic.Telnet.model.Order;
 
 import flexjson.JSONDeserializer;
@@ -46,8 +50,9 @@ public class OrdersResource {
 	ClientsDAO daoclient=new ClientsDAO();
 	
 	@GET
-	public ArrayList<Order> getOrders(){
-		return controller.selectOrders();
+	public Response getOrders(){
+		return Response.ok().entity(controller.selectOrders()).build();
+		
 	}
 	@GET
 	@Path("/scroll")
@@ -55,9 +60,24 @@ public class OrdersResource {
 		return controller.OrdersScrollList(offset);
 	}
 	@GET
+	@Path("/reverse")
+	public ArrayList<Order> getReverseOrdersScrollList(@QueryParam("offset") int offset){
+		return controller.ReverseOrdersScrollList(offset);
+	}
+	@GET
 	@Path("/date/{date}")
-	public ArrayList<Order> getOrdersByDate(@PathParam("date") String date,@QueryParam("offset") int offset){
-		return controller.ScrollOrdersByDate(offset, date);
+	public Response getOrdersByDate(@PathParam("date") String date,@QueryParam("offset") int offset){
+		return Response.ok().entity(controller.ScrollOrdersByDate(offset, date).size()).entity(controller.ScrollOrdersByDate(offset, date)).build();
+	}
+	@GET
+	@Path("/startDate/{date}")
+	public ArrayList<Order> getOrdersByStartDate(@PathParam("date") String date,@QueryParam("offset") int offset){
+		return controller.ScrollOrdersByStartDate(offset, date);
+	}
+	@GET
+	@Path("/endDate/{date}")
+	public ArrayList<Order> getOrdersByEndDate(@PathParam("date") String date,@QueryParam("offset") int offset){
+		return controller.ScrollOrdersByEndDate(offset, date);
 	}
 	@GET
 	@Path("/period")
@@ -65,14 +85,66 @@ public class OrdersResource {
 		return controller.ScrollOrdersByPeriod(offset, startDate, endDate);
 	}
 	@GET
+	@Path("/clientAndStartDate")
+	public ArrayList<Order> getOrdersByClientAndStartdate(@QueryParam("offset") int offset,@QueryParam("client_id") String idList,@QueryParam("start") String startDate){
+		String[] items=idList.split(",");
+		int[] id=new int[items.length];
+		for (int i = 0; i < items.length; i++) {
+			id[i]=Integer.parseInt(items[i]);
+		}
+		return controller.SelectOrdersByClientAndStartdate(offset, startDate, id);
+	}
+	@GET
+	@Path("/clientAndEndDate")
+	public ArrayList<Order> getOrdersByClientAndEnddate(@QueryParam("offset") int offset,@QueryParam("client_id") String idList,@QueryParam("end") String endDate){
+		String[] items=idList.split(",");
+		int[] id=new int[items.length];
+		for (int i = 0; i < items.length; i++) {
+			id[i]=Integer.parseInt(items[i]);
+		}
+		return controller.SelectOrdersByClientAndEnddate(offset, endDate, id);
+	}
+	@GET
+	@Path("/clientAndDate")
+	public ArrayList<Order> getOrdersByClientAndDate(@QueryParam("offset") int offset,@QueryParam("client_id") String idList,@QueryParam("date") String Date){
+		String[] items=idList.split(",");
+		int[] id=new int[items.length];
+		for (int i = 0; i < items.length; i++) {
+			id[i]=Integer.parseInt(items[i]);
+		}
+		return controller.SelectOrdersByClientAndDate(offset, Date, id);
+	}
+	@GET
 	@Path("/combination")
-	public ArrayList<Order> getOrdersCombination(@QueryParam("offset") int offset,@QueryParam("start") String startDate,@QueryParam("end") String endDate,@QueryParam("client_id") int id){
+	public ArrayList<Order> getOrdersCombination(@QueryParam("offset") int offset,@QueryParam("start") String startDate,@QueryParam("end") String endDate,@QueryParam("client_id") String idList){
+		String[] items=idList.split(",");
+		int[] id=new int[items.length];
+		for (int i = 0; i < items.length; i++) {
+			id[i]=Integer.parseInt(items[i]);
+		}
 		return controller.ScrollOrdersCombination(offset, startDate, endDate, id);
+	}
+	@GET
+	@Path("/clients")
+	public ArrayList<Order> getOrdersByClients(@QueryParam("offset") int offset,@QueryParam("id") String idList){
+		String[] items=idList.split(",");
+		int[] id=new int[items.length];
+		for (int i = 0; i < items.length; i++) {
+			id[i]=Integer.parseInt(items[i]);
+		}
+		return controller.SelectOrdersByClients(offset, id);
 	}
 	@GET
 	@Path("/{id}")
 	public Order getOrdersById(@PathParam("id") int id) {
 		return controller.selectOrderById(id);
+	}
+	@GET
+	@Path("/myorders")
+	@Secured
+	public ArrayList<Order> getMyOrders(@QueryParam("offset") int offset,@Context SecurityContext securityContext){
+		int id=Integer.parseInt(securityContext.getUserPrincipal().getName());
+		return controller.ScrollOrdersByClient(offset, id);
 	}
 	@POST
 	@Secured
@@ -108,5 +180,11 @@ public class OrdersResource {
 		String order_id=String.valueOf(g.getOrder_id());
 		URI uri=uriInfo.getAbsolutePathBuilder().path(order_id).build();
 		return Response.created(uri).entity(g).build();
+	}
+	@PUT
+	@Path("/listOforders")
+	public Response updateListOfOrders(ArrayList<Order> g) {
+		controller.updateListOfOrders(g);
+		return Response.ok().entity(g).build();
 	}
 }

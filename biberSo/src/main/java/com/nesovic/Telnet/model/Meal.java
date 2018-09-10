@@ -7,6 +7,7 @@ public class Meal {
 	private String name;
 	private double price;
 	private String link;
+	private boolean piece;
 	public Meal() {
 		super();
 		// TODO Auto-generated constructor stub
@@ -20,12 +21,13 @@ public class Meal {
 		this.category = category_id;
 	}
 
-	public Meal(Category category_id, String name, double price, String link) {
+	public Meal(Category category, String name, double price, String link, boolean piece) {
 		super();
-		this.category = category_id;
+		this.category = category;
 		this.name = name;
 		this.price = price;
 		this.link = link;
+		this.piece = piece;
 	}
 
 	public int getMeal_id() {
@@ -52,6 +54,13 @@ public class Meal {
 	}
 	public void setLink(String link) {
 		this.link = link;
+	}
+	public boolean isPiece() {
+		return piece;
+	}
+
+	public void setPiece(boolean piece) {
+		this.piece = piece;
 	}
 	@Override
 	public String toString() {

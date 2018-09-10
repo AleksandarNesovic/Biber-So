@@ -12,7 +12,7 @@ public class DatabaseConnector {
 	private static String password="c7ad7354a8c7bdaba39348302181886829e41b08e3fbd1d0d48c2777ccc0b6ba";
 	//private static String url="jdbc:postgresql://localhost:5432/OrdersDB";
 	//private static String username="postgres";
-    //private static String password="qqq";
+   // private static String password="qqq";
 	
 	public static Connection connect() throws ClassNotFoundException, SQLException {
 		Class.forName(driver);

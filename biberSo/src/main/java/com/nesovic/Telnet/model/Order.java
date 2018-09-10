@@ -8,6 +8,8 @@ public class Order {
 	private double order_price;
 	private String order_date;
 	private boolean piece;
+	private boolean display;
+	private int numberOfElements;
 	public Order() {
 		super();
 		// TODO Auto-generated constructor stub
@@ -20,8 +22,25 @@ public class Order {
 	public void setPiece(boolean piece) {
 		this.piece = piece;
 	}
+	
+	public boolean isDisplay() {
+		return display;
+	}
 
-	public Order(Clients client, Meal meal, int quantity, double order_price, String order_date, boolean piece) {
+	public void setDisplay(boolean display) {
+		this.display = display;
+	}
+
+	public int getNumberOfElements() {
+		return numberOfElements;
+	}
+
+	public void setNumberOfElements(int numberOfElements) {
+		this.numberOfElements = numberOfElements;
+	}
+
+	public Order(Clients client, Meal meal, int quantity, double order_price, String order_date, boolean piece,
+			boolean display) {
 		super();
 		this.client = client;
 		this.meal = meal;
@@ -29,6 +48,7 @@ public class Order {
 		this.order_price = order_price;
 		this.order_date = order_date;
 		this.piece = piece;
+		this.display = display;
 	}
 
 	public int getOrder_id() {
