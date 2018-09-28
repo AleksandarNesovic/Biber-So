@@ -16,6 +16,26 @@ public class CategoryDAO {
 	public CategoryDAO() {
 		super();
 	}
+	private void close() {
+		try {
+			if (resultSet != null) {
+				resultSet.close();
+			}
+
+			if (conn != null) {
+				conn.close();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
 	public ArrayList<Category> selectCategory(){
 		ArrayList<Category> lista=new ArrayList<>();
 		Category category=null;
@@ -35,7 +55,9 @@ public class CategoryDAO {
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
-		close();
+		finally {
+			this.close();
+	}
 		return lista;
 	}
 	public Category selectCategoryById(int id){
@@ -56,7 +78,9 @@ public class CategoryDAO {
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
-		close();
+		finally {
+			this.close();
+	}
 		return category;
 	}
 	public Category insertCategory(Category g){
@@ -71,7 +95,9 @@ public class CategoryDAO {
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
-		close();
+		finally {
+			this.close();
+	}
 		return g;
 	}
 	public Category updateCategory(Category g){
@@ -87,7 +113,9 @@ public class CategoryDAO {
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
-		close();
+		finally {
+			this.close();
+	}
 		return g;
 	}
 	public void deleteCategory(int id){
@@ -101,23 +129,10 @@ public class CategoryDAO {
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
-		close();
+		finally {
+			this.close();
+	}
 	
 	}
-	private void close() {
-		try {
-			if (resultSet != null) {
-				resultSet.close();
-			}
-
-			if (conn != null) {
-				conn.close();
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	
 
 }

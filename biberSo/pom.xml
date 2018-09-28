@@ -12,18 +12,96 @@
 
 	<build>
 		<finalName>biberSo</finalName>
+		<!-- <sourceDirectory>src/main/java</sourceDirectory> -->
+		<!-- <testSourceDirectory>src/main/resources/scala</testSourceDirectory> -->
+
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.5.1</version>
+				<version>${maven-compiler-plugin.version}</version>
 				<inherited>true</inherited>
 				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
+					<source>1.8</source>
+					<target>1.8</target>
 				</configuration>
 			</plugin>
+
+
+			<!-- <plugin> -->
+			<!-- <groupId>net.alchim31.maven</groupId> -->
+			<!-- <artifactId>scala-maven-plugin</artifactId> -->
+			<!-- <version>3.3.1</version> -->
+			<!-- <configuration> -->
+			<!-- <args> -->
+			<!-- <arg>-target:jvm-1.8</arg> -->
+			<!-- <arg>-deprecation</arg> -->
+			<!-- <arg>-feature</arg> -->
+			<!-- <arg>-unchecked</arg> -->
+			<!-- <arg>-language:implicitConversions</arg> -->
+			<!-- <arg>-language:postfixOps</arg> -->
+			<!-- </args> -->
+			<!-- </configuration> -->
+			<!-- <executions> -->
+			<!-- <execution> -->
+			<!-- <goals> -->
+			<!-- <goal>compile</goal> -->
+			<!-- <goal>testCompile</goal> -->
+			<!-- </goals> -->
+			<!-- </execution> -->
+			<!-- </executions> -->
+			<!-- </plugin> -->
+			<!-- <plugin> -->
+			<!-- <groupId>io.gatling</groupId> -->
+			<!-- <artifactId>gatling-maven-plugin</artifactId> -->
+			<!-- <version>3.0.0</version> -->
+			<!-- <executions> -->
+			<!-- <execution> -->
+			<!-- <phase>integration-test</phase> -->
+			<!-- <id>getOrdersByDate</id> -->
+			<!-- <goals> -->
+			<!-- <goal>test</goal> -->
+			<!-- </goals> -->
+			<!-- <configuration> -->
+			<!-- <simulationClass>scala.perspective.simulation.OrderSimulation</simulationClass> -->
+			<!-- </configuration> -->
+			<!-- </execution> -->
+			<!-- </executions> -->
+			<!-- </plugin> -->
+
 		</plugins>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>net.alchim31.maven</groupId>
+					<artifactId>scala-maven-plugin</artifactId>
+					<version>${scala-maven-plugin.version}</version>
+					<executions>
+						<execution>
+							<id>compile</id>
+							<phase>compile</phase>
+							<goals>
+								<goal>add-source</goal>
+								<goal>compile</goal>
+							</goals>
+						</execution>
+						<execution>
+							<id>test-compile</id>
+							<phase>test-compile</phase>
+							<goals>
+								<goal>add-source</goal>
+								<goal>testCompile</goal>
+							</goals>
+						</execution>
+					</executions>
+					<configuration>
+						<recompileMode>incremental</recompileMode>
+						<verbose>true</verbose>
+						<scalaVersion>${scala.version}</scalaVersion>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
 
 	<dependencyManagement>
@@ -135,10 +213,45 @@
 			<version>3.3</version>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/com.zaxxer/HikariCP -->
+		<dependency>
+			<groupId>com.zaxxer</groupId>
+			<artifactId>HikariCP</artifactId>
+			<version>3.2.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.bugsnag</groupId>
+			<version>[3.0,4.0)</version>
+			<artifactId>bugsnag</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>io.gatling</groupId>
+			<artifactId>gatling-maven-plugin</artifactId>
+			<version>3.0.0</version>
+			<type>maven-plugin</type>
+		</dependency>
+		<dependency>
+
+			<groupId>io.gatling.highcharts</groupId>
+			<artifactId>gatling-charts-highcharts</artifactId>
+			<version>3.0.0-RC1</version>
+			<scope>test</scope>
+		</dependency>
 
 	</dependencies>
 	<properties>
 		<jersey.version>2.27</jersey.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.version>3.0.0</maven.version>
+		<java.version>1.8</java.version>
+		<scala.version>2.2.1</scala.version>
+		<maven-compiler-plugin.version>3.7.0</maven-compiler-plugin.version>
+		<!-- <gatling.version>${project.version}</gatling.version> -->
+		<gatling.version>3.0.0</gatling.version>
+		<gatling-plugin.version>3.0.0</gatling-plugin.version>
+
+		<scala-maven-plugin.version>3.3.1</scala-maven-plugin.version>
 	</properties>
 </project>

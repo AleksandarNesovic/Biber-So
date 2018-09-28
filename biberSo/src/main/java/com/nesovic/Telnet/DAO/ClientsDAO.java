@@ -25,6 +25,26 @@ public class ClientsDAO {
 	public ClientsDAO() {
 		super();
 	}
+	private void close() {
+		try {
+			if (resultSet != null) {
+				resultSet.close();
+			}
+
+			if (conn != null) {
+				conn.close();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
 	public ArrayList<Clients> selectClients(){
 		ArrayList<Clients> lista=new ArrayList<>();
 		Clients client=null;
@@ -48,7 +68,9 @@ public class ClientsDAO {
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
-		close();
+		finally {
+			this.close();
+	}
 		return lista;
 	}
 	public ArrayList<Clients> selectClientsByUsername(String username){
@@ -74,7 +96,9 @@ public class ClientsDAO {
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
-		close();
+		finally {
+			this.close();
+	}
 		return lista;
 	}
 	public Clients selectClientsById(int id){
@@ -99,7 +123,9 @@ public class ClientsDAO {
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
-		close();
+		finally {
+			this.close();
+	}
 		return client;
 	}
 	public Clients insertClient(Clients c){
@@ -116,7 +142,9 @@ public class ClientsDAO {
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
-		close();
+		finally {
+			this.close();
+	}
 		return c;
 	}
 	public Clients updateClient(Clients c){
@@ -134,7 +162,9 @@ public class ClientsDAO {
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
-		close();
+		finally {
+			this.close();
+	}
 		return c;
 	}
 	public void deleteClient(int id) {
@@ -174,7 +204,7 @@ public class ClientsDAO {
 			System.out.println("Pogresna sifra!");
 			throw new AuthFaildException();
 		}
-		close();
+		this.close();
 		return client;
 		
 	}
@@ -202,19 +232,4 @@ public class ClientsDAO {
 		formatter.close();
 		return result;
 	}
-
-	private void close() {
-		try {
-			if (resultSet != null) {
-				resultSet.close();
-			}
-
-			if (conn != null) {
-				conn.close();
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
 }

@@ -4,6 +4,7 @@ import java.sql.SQLException;
 
 
 
+
 import java.util.Date;
 
 import javax.ws.rs.core.Application;
@@ -30,7 +31,7 @@ public class LoginService extends Application{
 					.claim("name",client.getName())
 					.claim("lastname", client.getLastname())
 					.claim("role", client.getRole())
-					.setExpiration(new Date(time+900000))
+					.setExpiration(new Date(time+1800000))
 					.signWith(SignatureAlgorithm.HS256, "password".getBytes())
 					.compact();
 		//	json=Json.createObjectBuilder().add(jwt).build();

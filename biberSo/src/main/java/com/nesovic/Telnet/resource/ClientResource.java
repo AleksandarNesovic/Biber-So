@@ -90,15 +90,13 @@ public class ClientResource {
 			System.out.println("Resource not found");
 			e.printStackTrace();
 		} catch (SQLException e) {
-			System.out.println("eror");
 			e.printStackTrace();
 		}catch (java.lang.NullPointerException e) {
-			System.out.println("erorrrr");
-			return Response.status(Status.CONFLICT).entity(Json.createValue("Pogresan username or password")).build();
+			return Response.status(Status.UNAUTHORIZED).entity(Json.createValue("Pogresan username or password")).build();
 		}catch(AuthFaildException e) {
 			return Response.status(Status.UNAUTHORIZED).entity(Json.createValue("Pogresna sifra")).build();
 		}
-		return Response.status(Status.CONFLICT).header("Access-Control-Allow-Origin", "*").entity("Pogresna sifra!!!")
+		return Response.status(Status.UNAUTHORIZED).header("Access-Control-Allow-Origin", "*").entity("Pogresna sifra!!!")
 				.header("Access-Control-Allow-Methods", "POST").allow("OPTIONS").build();
 	}
 }

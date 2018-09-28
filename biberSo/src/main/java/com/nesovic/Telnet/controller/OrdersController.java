@@ -53,6 +53,9 @@ public class OrdersController {
 	public static ArrayList<Order> ScrollOrdersByDate(int offset,String date){
 		return dao.ScrollOrdersByDate(offset, date);
 	}
+	public static ArrayList<Order> SelectOrdersByDate(String date){
+		return dao.selectOrdersByDate(date);
+	}
 	public static ArrayList<Order> ScrollOrdersByStartDate(int offset,String date){
 		return dao.ScrollOrdersByStartDate(offset, date);
 	}

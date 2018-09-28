@@ -21,6 +21,26 @@ public class MealDAO {
 	public MealDAO() {
 		super();
 	}
+	private void close() {
+		try {
+			if (resultSet != null) {
+				resultSet.close();
+			}
+
+			if (conn != null) {
+				conn.close();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
 	public ArrayList<Meal> selectMeal(){
 		ArrayList<Meal> lista=new ArrayList<>();
 		Meal meal=null;
@@ -47,7 +67,9 @@ public class MealDAO {
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
-		close();
+		finally {
+			this.close();
+	}
 		return lista;
 	}
 	public ArrayList<Meal> scrollMeal(int offset){
@@ -77,7 +99,9 @@ public class MealDAO {
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
-		close();
+		finally {
+			this.close();
+	}
 		return lista;
 	}
 	public ArrayList<Meal> selectMealByPrice(){
@@ -106,7 +130,9 @@ public class MealDAO {
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
-		close();
+		finally {
+			this.close();
+	}
 		return lista;
 	}
 	public ArrayList<Meal> selectMealByCategory(int id){
@@ -136,7 +162,9 @@ public class MealDAO {
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
-		close();
+		finally {
+			this.close();
+	}
 		return lista;
 	}
 	public ArrayList<Meal> scrollMealByCategory(int id,int offset){
@@ -167,7 +195,9 @@ public class MealDAO {
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
-		close();
+		finally {
+			this.close();
+	}
 		return lista;
 	}
 	public Meal selectMealById(int id){
@@ -195,7 +225,9 @@ public class MealDAO {
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
-		close();
+		finally {
+			this.close();
+	}
 		return meal;
 	}
 	public Meal insertMeal(Meal g){
@@ -213,7 +245,9 @@ public class MealDAO {
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
-		close();
+		finally {
+			this.close();
+	}
 		return g;
 	}
 	public Meal updateMeal(Meal g){
@@ -232,7 +266,9 @@ public class MealDAO {
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
-		close();
+		finally {
+			this.close();
+	}
 		return g;
 	}
 	public void deleteMeal(int id){
@@ -246,23 +282,10 @@ public class MealDAO {
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
-		close();
+		finally {
+			this.close();
+	}
 	
 	}
-
-	private void close() {
-		try {
-			if (resultSet != null) {
-				resultSet.close();
-			}
-
-			if (conn != null) {
-				conn.close();
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
 
 }

@@ -1,6 +1,6 @@
 package com.nesovic.Telnet.DAO;
 
-import java.awt.List;
+
 import java.sql.Connection;
 
 
@@ -25,6 +25,27 @@ public class OrdersDAO {
 	public OrdersDAO() {
 		super();
 	}
+	private void close() {
+		try {
+			if (resultSet != null) {
+				resultSet.close();
+			}
+
+			if (conn != null) {
+				conn.close();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	
 	public int countRows(String sql) {
 		int br=0;
 		try {
@@ -39,6 +60,7 @@ public class OrdersDAO {
 		} catch ( SQLException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
+		this.close();
 		return br;
 	}
 	public ArrayList<Order> selectOrders(){
@@ -76,11 +98,13 @@ public class OrdersDAO {
 			
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
-		}
-		close();
+		}	finally {
+			this.close();
+	}
 		for (Order order : lista) {
 			order.setNumberOfElements(countRows(sql));
 		}
+		this.close();
 		return lista;
 	}
 	public ArrayList<Order> selectOrdersByDate(String date){
@@ -90,7 +114,7 @@ public class OrdersDAO {
 		ClientsDAO daoc=new ClientsDAO();
 		try {
 			conn=DatabaseConnector.connect();
-			preparedStatement=conn.prepareStatement("select * from orders where order_date=?");
+			preparedStatement=conn.prepareStatement("select * from orders where order_date=? order by order_id DESC");
 			preparedStatement.setString(1, date);
 			preparedStatement.execute();
 			resultSet=preparedStatement.getResultSet();
@@ -109,13 +133,14 @@ public class OrdersDAO {
 				item.setOrder_date(resultSet.getString(6));
 				item.setPiece(resultSet.getBoolean(7));
 				item.setDisplay(resultSet.getBoolean(8));
-				item.setNumberOfElements(resultSet.getInt(9));
 				lista.add(item);
 			}
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
-		close();
+		finally {
+			this.close();
+	}
 		return lista;
 	}
 	public Order selectOrderById(int id){
@@ -147,7 +172,9 @@ public class OrdersDAO {
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
-		close();
+		finally {
+			this.close();
+	}
 		return item;
 	}
 	public Order insertOrder(Order item) {
@@ -172,7 +199,9 @@ public class OrdersDAO {
 		} catch (ClassNotFoundException | SQLException  e) {
 			e.printStackTrace();
 		}
-		close();
+		finally {
+			this.close();
+	}
 		return item;
 	}
 	/*public ArrayList<Order> insertOrderList(ArrayList<Order> item) {
@@ -199,7 +228,7 @@ public class OrdersDAO {
 	public Order updateOrder(Order item) {
 		MealDAO dao=new MealDAO();
 		Meal m=dao.selectMealById(item.getMeal().getMeal_id());
-		String datum = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
+		//String datum = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
 		try {
 			conn=DatabaseConnector.connect();
 			preparedStatement=conn.prepareStatement("update orders set client_id=?,meal_id=?,quantity=?,order_price=?,order_date=?,piece=?,display=? where order_id=?");
@@ -207,7 +236,7 @@ public class OrdersDAO {
 			preparedStatement.setInt(2, item.getMeal().getMeal_id());
 			preparedStatement.setInt(3, item.getQuantity());
 			preparedStatement.setDouble(4, (item.getQuantity()*m.getPrice())/1000);
-			preparedStatement.setString(5, datum);
+			preparedStatement.setString(5, item.getOrder_date());
 			preparedStatement.setBoolean(6, item.isPiece());
 			preparedStatement.setBoolean(7, item.isDisplay());
 			preparedStatement.setInt(8, item.getOrder_id());
@@ -215,34 +244,39 @@ public class OrdersDAO {
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
-		close();
+		finally {
+			this.close();
+	}
 		return item;
 	}
 	public ArrayList<Order> updateListOfOrders(ArrayList<Order> items) {
 		ArrayList<Order> lista=new ArrayList<>();
 		MealDAO dao=new MealDAO();
-		for (Order order : items) {
-			Meal m=dao.selectMealById(order.getMeal().getMeal_id());
-			String datum = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
-			try {
-				conn=DatabaseConnector.connect();
+		try {
+			conn=DatabaseConnector.connect();
+				for (Order order : items) {
+					Meal m=dao.selectMealById(order.getMeal().getMeal_id());
+				//	String datum = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
 				preparedStatement=conn.prepareStatement("update orders set client_id=?,meal_id=?,quantity=?,order_price=?,order_date=?,piece=?,display=? where order_id=?");
 				preparedStatement.setInt(1, order.getClient().getClient_id());
 				preparedStatement.setInt(2, order.getMeal().getMeal_id());
 				preparedStatement.setInt(3, order.getQuantity());
 				preparedStatement.setDouble(4, (order.getQuantity()*m.getPrice())/1000);
-				preparedStatement.setString(5, datum);
+				preparedStatement.setString(5, order.getOrder_date());
 				preparedStatement.setBoolean(6, order.isPiece());
 				preparedStatement.setBoolean(7, order.isDisplay());
 				preparedStatement.setInt(8, order.getOrder_id());
-				lista.add(order);
 				preparedStatement.execute();
+				lista.add(order);
+				
 		
 		
-		} catch (ClassNotFoundException | SQLException e) {
+		} }catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
-		}}
-		close();
+		}
+			finally {
+				this.close();
+		}
 		return lista;
 	}
 	public ArrayList<Order> OrdersScrollList(int offset){
@@ -276,7 +310,9 @@ public class OrdersDAO {
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
-		close();
+		finally {
+			this.close();
+	}
 		return lista;
 	}
 	public ArrayList<Order> ReverseOrdersScrollList(int offset){
@@ -310,14 +346,15 @@ public class OrdersDAO {
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
-		close();
+		finally {
+			this.close();
+	}
 		return lista;
 	}
 	
 	public ArrayList<Order> ScrollOrdersByDate(int offset,String date){
 		String sql="SELECT * FROM orders where order_date='"+date+"'";
 		int br=countRows(sql);
-		System.out.println(br);
 		ArrayList<Order> lista=new ArrayList<>();
 		Order item=null;
 		MealDAO daog=new MealDAO();
@@ -349,11 +386,14 @@ public class OrdersDAO {
 			
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
-		}
-		close();
+		}	finally {
+			this.close();
+	}
+		
 		for (Order order : lista) {
 			order.setNumberOfElements(br);
 		}
+		this.close();
 		return lista;
 	}
 	public ArrayList<Order> ScrollOrdersByStartDate(int offset,String date){
@@ -388,7 +428,9 @@ public class OrdersDAO {
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
-		close();
+		finally {
+			this.close();
+	}
 		return lista;
 	}
 	public ArrayList<Order> ScrollOrdersByEndDate(int offset,String date){
@@ -423,7 +465,9 @@ public class OrdersDAO {
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
-		close();
+		finally {
+			this.close();
+	}
 		return lista;
 	}
 	public ArrayList<Order> ScrollOrdersByPeriod(int offset,String startDate,String endDate){
@@ -460,7 +504,9 @@ public class OrdersDAO {
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
-		close();
+		finally {
+			this.close();
+	}
 		return lista;
 	}
 	public ArrayList<Order> ScrollOrdersCombination(int offset,String startDate,String endDate,int[] idList){
@@ -469,8 +515,9 @@ public class OrdersDAO {
 		MealDAO daog=new MealDAO();
 		ClientsDAO daoc=new ClientsDAO();
 		try {
-			for (int id: idList) {
 			conn=DatabaseConnector.connect();
+			for (int id: idList) {
+			
 			preparedStatement=conn.prepareStatement("SELECT * FROM orders where client_id=? and order_date between ? and ? order by order_id DESC OFFSET ? ROWS FETCH NEXT 10 ROWS ONLY");
 			preparedStatement.setInt(1, id);
 			preparedStatement.setString(2, startDate);
@@ -499,7 +546,9 @@ public class OrdersDAO {
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
-		close();
+		finally {
+			this.close();
+	}
 		return lista;
 	}
 	public ArrayList<Order> SelectOrdersByClientAndStartdate(int offset,String startDate,int[] idList){
@@ -508,8 +557,9 @@ public class OrdersDAO {
 		MealDAO daog=new MealDAO();
 		ClientsDAO daoc=new ClientsDAO();
 		try {
-			for (int id: idList) {
 			conn=DatabaseConnector.connect();
+			for (int id: idList) {
+			
 			preparedStatement=conn.prepareStatement("SELECT * FROM orders where client_id=? and order_date >=? OFFSET ? ROWS FETCH NEXT 10 ROWS ONLY");
 			preparedStatement.setInt(1, id);
 			preparedStatement.setString(2, startDate);
@@ -536,8 +586,10 @@ public class OrdersDAO {
 			}}
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
+		}finally {
+			this.close();	
 		}
-		close();
+		
 		return lista;
 	}
 	public ArrayList<Order> SelectOrdersByClientAndEnddate(int offset,String endDate,int[] idList){
@@ -546,8 +598,9 @@ public class OrdersDAO {
 		MealDAO daog=new MealDAO();
 		ClientsDAO daoc=new ClientsDAO();
 		try {
-			for (int id: idList) {
 			conn=DatabaseConnector.connect();
+			for (int id: idList) {
+			
 			preparedStatement=conn.prepareStatement("SELECT * FROM orders where client_id=? and order_date <=? OFFSET ? ROWS FETCH NEXT 10 ROWS ONLY");
 			preparedStatement.setInt(1, id);
 			preparedStatement.setString(2, endDate);
@@ -575,7 +628,9 @@ public class OrdersDAO {
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
-		close();
+		finally {
+			this.close();
+	}
 		return lista;
 	}
 	public ArrayList<Order> SelectOrdersByClientAndDate(int offset,String Date,int[] idList){
@@ -584,8 +639,9 @@ public class OrdersDAO {
 		MealDAO daog=new MealDAO();
 		ClientsDAO daoc=new ClientsDAO();
 		try {
-			for (int id: idList) {
 			conn=DatabaseConnector.connect();
+			for (int id: idList) {
+			
 			preparedStatement=conn.prepareStatement("SELECT * FROM orders where client_id=? and order_date =? order by order_id DESC OFFSET ? ROWS FETCH NEXT 10 ROWS ONLY");
 			preparedStatement.setInt(1, id);
 			preparedStatement.setString(2, Date);
@@ -613,7 +669,9 @@ public class OrdersDAO {
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
-		close();
+		finally {
+			this.close();
+	}
 		return lista;
 	}
 	public ArrayList<Order> ScrollOrdersByClient(int offset,int id){
@@ -649,7 +707,9 @@ public class OrdersDAO {
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
-		close();
+		finally {
+			this.close();
+	}
 		return lista;
 	}
 	public ArrayList<Order> SelectOrdersByClients(int offset,int[] idList){
@@ -658,8 +718,9 @@ public class OrdersDAO {
 		MealDAO daog=new MealDAO();
 		ClientsDAO daoc=new ClientsDAO();
 		try {
+			conn=DatabaseConnector.connect();
 			for (int id: idList) {
-				conn=DatabaseConnector.connect();
+				
 				preparedStatement=conn.prepareStatement("SELECT * FROM orders where client_id=? order by order_id DESC OFFSET ? ROWS FETCH NEXT 10 ROWS ONLY");
 				preparedStatement.setInt(1, id);
 				preparedStatement.setInt(2, offset);
@@ -688,7 +749,9 @@ public class OrdersDAO {
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
-		close();
+		finally {
+			this.close();
+	}
 		return lista;
 	}
 	public void deleteOrder(int id) {
@@ -700,21 +763,12 @@ public class OrdersDAO {
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
-		close();
+		finally {
+			this.close();
+	}
 		
 	}
-	private void close() {
-		try {
-			if (resultSet != null) {
-				resultSet.close();
-			}
-
-			if (conn != null) {
-				conn.close();
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+	
+	
 	
 }

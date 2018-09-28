@@ -3,8 +3,10 @@ package com.nesovic.Telnet.resource;
 
 import java.net.URI;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -18,18 +20,23 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.ServerErrorException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
+import javax.xml.ws.http.HTTPException;
 
 import org.eclipse.yasson.internal.serializer.JsonArrayDeserializer;
 
+import com.bugsnag.Bugsnag;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.nesovic.Telnet.DAO.ClientsDAO;
 import com.nesovic.Telnet.annotations.Secured;
+import com.nesovic.Telnet.controller.OrderClosedController;
 import com.nesovic.Telnet.controller.OrdersController;
 import com.nesovic.Telnet.model.Clients;
 import com.nesovic.Telnet.model.Order;
@@ -47,7 +54,10 @@ import io.swagger.annotations.Tag;
 public class OrdersResource {
 
 	OrdersController controller=OrdersController.getInstance();
+	OrderClosedController controller2=OrderClosedController.getInstance();
 	ClientsDAO daoclient=new ClientsDAO();
+	//Bugsnag bugsnag = new Bugsnag("6956aff2a8ca3dd356a04806e4d2ed8d");
+	
 	
 	@GET
 	public Response getOrders(){
@@ -66,8 +76,13 @@ public class OrdersResource {
 	}
 	@GET
 	@Path("/date/{date}")
-	public Response getOrdersByDate(@PathParam("date") String date,@QueryParam("offset") int offset){
+	public Response getOrdersByDateandOffset(@PathParam("date") String date,@QueryParam("offset") int offset){
 		return Response.ok().entity(controller.ScrollOrdersByDate(offset, date).size()).entity(controller.ScrollOrdersByDate(offset, date)).build();
+	}
+	@GET
+	@Path("/singleDate/{date}")
+	public Response getOrdersByDate(@PathParam("date") String date){
+		return Response.ok().entity(controller.SelectOrdersByDate(date)).build();
 	}
 	@GET
 	@Path("/startDate/{date}")
@@ -159,12 +174,17 @@ public class OrdersResource {
 	@Path("/list")
 	@Secured
 	public Response addOrderList(ArrayList<Order> item,@Context UriInfo uriInfo,@Context SecurityContext securityContext) {
-		for (Order order : item) {
-	//	Order first=new JSONDeserializer<Order>().deserialize(order.toString(), Order.class);
-		order.setClient(daoclient.selectClientsById(Integer.parseInt(securityContext.getUserPrincipal().getName())));
-		controller.insertOrder(order);
+		String datum = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
+		if(controller2.checkOrderClosed(datum)==false) {
+			for (Order order : item) {
+		//	Order first=new JSONDeserializer<Order>().deserialize(order.toString(), Order.class);
+			order.setClient(daoclient.selectClientsById(Integer.parseInt(securityContext.getUserPrincipal().getName())));
+			controller.insertOrder(order);
+			}
+			return Response.ok().entity(item).build();
+		}else {
+			return Response.status(Status.FORBIDDEN).entity("Order closed for today").build();
 		}
-		return Response.ok().entity(item).build();
 	}
 	@DELETE
 	@Path("/{id}")
@@ -186,5 +206,17 @@ public class OrdersResource {
 	public Response updateListOfOrders(ArrayList<Order> g) {
 		controller.updateListOfOrders(g);
 		return Response.ok().entity(g).build();
+	}
+	@POST
+	@Path("/orderClosed")
+	public Response insertOrderClosed(@QueryParam("date") String date,@QueryParam("status") boolean status) {
+		controller2.insertOrderClosed(date, status);
+		return Response.ok().build();
+	}
+	@PUT
+	@Path("/updateOrderClosed/{date}")
+	public Response updateOrderClosed(@PathParam("date") String date,@QueryParam("status") boolean status) {
+		controller2.updateOrderClosed(date, status);
+		return Response.ok().build();
 	}
 }
