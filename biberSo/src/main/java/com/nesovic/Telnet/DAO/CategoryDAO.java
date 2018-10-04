@@ -31,10 +31,18 @@ public class CategoryDAO {
 			try {
 				conn.close();
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
+	}
+	private Category extractCategoryFromResultSet(ResultSet resultSet) throws SQLException {
+		Category category=new Category();
+		
+		category.setCategory_id(resultSet.getInt("category_id"));
+		category.setName(resultSet.getString("name"));
+		category.setLink(resultSet.getString("link"));
+		
+		return category;
 	}
 	public ArrayList<Category> selectCategory(){
 		ArrayList<Category> lista=new ArrayList<>();
@@ -46,10 +54,7 @@ public class CategoryDAO {
 			preparedStatement.execute();
 			resultSet=preparedStatement.getResultSet();
 			while(resultSet.next()) {
-				category=new Category();
-				category.setCategory_id(resultSet.getInt(1));
-				category.setName(resultSet.getString(3));
-				category.setLink(resultSet.getString(2));
+				category=extractCategoryFromResultSet(resultSet);
 				lista.add(category);
 			}
 		} catch (ClassNotFoundException | SQLException e) {
@@ -70,10 +75,7 @@ public class CategoryDAO {
 			preparedStatement.execute();
 			resultSet=preparedStatement.getResultSet();
 			if(resultSet.next()) {
-				category=new Category();
-				category.setCategory_id(resultSet.getInt(1));
-				category.setName(resultSet.getString(3));
-				category.setLink(resultSet.getString(2));
+				category=extractCategoryFromResultSet(resultSet);
 			}
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();

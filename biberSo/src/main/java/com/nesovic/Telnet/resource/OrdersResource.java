@@ -77,7 +77,7 @@ public class OrdersResource {
 	@GET
 	@Path("/date/{date}")
 	public Response getOrdersByDateandOffset(@PathParam("date") String date,@QueryParam("offset") int offset){
-		return Response.ok().entity(controller.ScrollOrdersByDate(offset, date).size()).entity(controller.ScrollOrdersByDate(offset, date)).build();
+		return Response.ok().entity(controller.ScrollOrdersByDate(offset, date)).build();
 	}
 	@GET
 	@Path("/singleDate/{date}")

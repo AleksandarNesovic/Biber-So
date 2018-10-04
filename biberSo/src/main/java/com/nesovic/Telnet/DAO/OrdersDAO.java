@@ -40,99 +40,98 @@ public class OrdersDAO {
 			try {
 				conn.close();
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 	}
-	
-	public int countRows(String sql) {
-		int br=0;
-		try {
-			conn=DatabaseConnector.connect();
-			
-			preparedStatement=conn.prepareStatement(sql);
-			preparedStatement.execute();
-			resultSet=preparedStatement.getResultSet();
-			while(resultSet.next()) {
-				br++;
-			}
-		} catch ( SQLException | ClassNotFoundException e) {
-			e.printStackTrace();
-		}
-		this.close();
-		return br;
+	private Order extractOrderFromResultSet(ResultSet rs) throws SQLException {
+		Order item=new Order();
+		
+		item.setOrder_id(resultSet.getInt("order_id"));
+		
+		Clients client=new Clients();
+		client.setClient_id(resultSet.getInt("client_id"));
+		client.setName(resultSet.getString("name"));
+		client.setLastname(resultSet.getString("lastname"));
+		client.setUsername(resultSet.getString("username"));
+		item.setClient(client);
+		
+		Meal main=new Meal();
+		main.setMeal_id(resultSet.getInt("meal_id"));
+		main.setName(resultSet.getString("mealName"));
+		main.setPrice(resultSet.getDouble("price"));
+		main.setLink(resultSet.getString("link"));
+		main.setPiece(resultSet.getBoolean("piece"));
+		item.setMeal(main);
+		
+		item.setQuantity(resultSet.getInt("quantity"));
+		item.setOrder_price(resultSet.getDouble("order_price"));
+		item.setOrder_date(resultSet.getString("order_date"));
+		item.setPiece(resultSet.getBoolean("piece"));
+		item.setDisplay(resultSet.getBoolean("display"));
+		return item;
 	}
+	
+//	public int countRows(String sql) {
+//		int br=0;
+//		try {
+//			conn=DatabaseConnector.connect();
+//			
+//			preparedStatement=conn.prepareStatement(sql);
+//			preparedStatement.execute();
+//			resultSet=preparedStatement.getResultSet();
+//			while(resultSet.next()) {
+//				br++;
+//			}
+//		} catch ( SQLException | ClassNotFoundException e) {
+//			e.printStackTrace();
+//		}finally{
+//			this.close();
+//		}
+//		return br;
+//	}
 	public ArrayList<Order> selectOrders(){
-		String sql="select * from orders";
 		ArrayList<Order> lista=new ArrayList<>();
 		Order item=null;
-		MealDAO daog=new MealDAO();
-		ClientsDAO daoc=new ClientsDAO();
 		try {
-			
 			conn=DatabaseConnector.connect();
 			
-			preparedStatement=conn.prepareStatement(sql);
+			preparedStatement=conn.prepareStatement("select o.order_id, o.quantity,o.order_price, o.order_date,o.piece,o.display, c.client_id, c.name,c.lastname, c.username,c.password,c.role,c.email, m.meal_id, m.name as mealName, m.price,m.link,m.piece from orders o join clients c on o.client_id=c.client_id join meals m on o.meal_id=m.meal_id");
 			preparedStatement.execute();
 			resultSet=preparedStatement.getResultSet();
+			
 			while(resultSet.next()) {
-				item=new Order();
-				item.setOrder_id(resultSet.getInt(1));
 				
-				Clients client=daoc.selectClientsById(resultSet.getInt(2));
-				item.setClient(client);
-				
-				Meal glavno=daog.selectMealById(resultSet.getInt(3));
-				item.setMeal(glavno);
-				
-				item.setQuantity(resultSet.getInt(4));
-				item.setOrder_price(resultSet.getDouble(5));
-				item.setOrder_date(resultSet.getString(6));
-				item.setPiece(resultSet.getBoolean(7));
-				item.setDisplay(resultSet.getBoolean(8));
+				item=extractOrderFromResultSet(resultSet);
 				
 				lista.add(item);
 			}
-			
+			for (Order order : lista) {
+				order.setNumberOfElements(lista.size());
+			}
 			
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
-		}	finally {
+		}
+		finally {
 			this.close();
 	}
-		for (Order order : lista) {
-			order.setNumberOfElements(countRows(sql));
-		}
-		this.close();
 		return lista;
 	}
 	public ArrayList<Order> selectOrdersByDate(String date){
 		ArrayList<Order> lista=new ArrayList<>();
 		Order item=null;
-		MealDAO daog=new MealDAO();
-		ClientsDAO daoc=new ClientsDAO();
+		
 		try {
 			conn=DatabaseConnector.connect();
-			preparedStatement=conn.prepareStatement("select * from orders where order_date=? order by order_id DESC");
+			preparedStatement=conn.prepareStatement("select o.order_id, o.quantity,o.order_price, o.order_date,o.piece,o.display, c.client_id, c.name,c.lastname, c.username,c.password,c.role,c.email, m.meal_id, m.name as mealName, m.price,m.link,m.piece from orders o join clients c on o.client_id=c.client_id join meals m on o.meal_id=m.meal_id where order_date=? order by order_id DESC");
 			preparedStatement.setString(1, date);
 			preparedStatement.execute();
 			resultSet=preparedStatement.getResultSet();
 			while(resultSet.next()) {
-				item=new Order();
-				item.setOrder_id(resultSet.getInt(1));
 				
-				Clients client=daoc.selectClientsById(resultSet.getInt(2));
-				item.setClient(client);
+				item=extractOrderFromResultSet(resultSet);
 				
-				Meal glavno=daog.selectMealById(resultSet.getInt(3));
-				item.setMeal(glavno);
-				
-				item.setQuantity(resultSet.getInt(4));
-				item.setOrder_price(resultSet.getDouble(5));
-				item.setOrder_date(resultSet.getString(6));
-				item.setPiece(resultSet.getBoolean(7));
-				item.setDisplay(resultSet.getBoolean(8));
 				lista.add(item);
 			}
 		} catch (ClassNotFoundException | SQLException e) {
@@ -145,29 +144,16 @@ public class OrdersDAO {
 	}
 	public Order selectOrderById(int id){
 		Order item=null;
-		MealDAO daog=new MealDAO();
-		ClientsDAO daoc=new ClientsDAO();
+		
 		try {
 			conn=DatabaseConnector.connect();
-			preparedStatement=conn.prepareStatement("select * from orders where order_id=?");
+			preparedStatement=conn.prepareStatement("select o.order_id, o.quantity,o.order_price, o.order_date,o.piece,o.display, c.client_id, c.name,c.lastname, c.username,c.password,c.role,c.email, m.meal_id, m.name as mealName, m.price,m.link,m.piece from orders o join clients c on o.client_id=c.client_id join meals m on o.meal_id=m.meal_id where order_id=?");
 			preparedStatement.setInt(1, id);
 			preparedStatement.execute();
 			resultSet=preparedStatement.getResultSet();
 			if(resultSet.next()) {
-				item=new Order();
-				item.setOrder_id(resultSet.getInt(1));
 				
-				Clients client=daoc.selectClientsById(resultSet.getInt(2));
-				item.setClient(client);
-				
-				Meal glavno=daog.selectMealById(resultSet.getInt(3));
-				item.setMeal(glavno);
-				
-				item.setQuantity(resultSet.getInt(4));
-				item.setOrder_price(resultSet.getDouble(5));
-				item.setOrder_date(resultSet.getString(6));
-				item.setPiece(resultSet.getBoolean(7));
-				item.setDisplay(resultSet.getBoolean(8));
+				item=extractOrderFromResultSet(resultSet);
 			}
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
@@ -282,29 +268,17 @@ public class OrdersDAO {
 	public ArrayList<Order> OrdersScrollList(int offset){
 		ArrayList<Order> lista=new ArrayList<>();
 		Order item=null;
-		MealDAO daog=new MealDAO();
-		ClientsDAO daoc=new ClientsDAO();
+		
 		try {
 			conn=DatabaseConnector.connect();
-			preparedStatement=conn.prepareStatement("SELECT * FROM orders order by order_id DESC OFFSET ? ROWS FETCH NEXT 10 ROWS ONLY");
+			preparedStatement=conn.prepareStatement("select o.order_id, o.quantity,o.order_price, o.order_date,o.piece,o.display, c.client_id, c.name,c.lastname, c.username,c.password,c.role,c.email, m.meal_id, m.name as mealName, m.price,m.link,m.piece from orders o join clients c on o.client_id=c.client_id join meals m on o.meal_id=m.meal_id order by order_id DESC OFFSET ? ROWS FETCH NEXT 10 ROWS ONLY");
 			preparedStatement.setInt(1, offset);
 			preparedStatement.execute();
 			resultSet=preparedStatement.getResultSet();
 			while(resultSet.next()) {
-				item=new Order();
-				item.setOrder_id(resultSet.getInt(1));
 				
-				Clients client=daoc.selectClientsById(resultSet.getInt(2));
-				item.setClient(client);
+				item=extractOrderFromResultSet(resultSet);
 				
-				Meal glavno=daog.selectMealById(resultSet.getInt(3));
-				item.setMeal(glavno);
-				
-				item.setQuantity(resultSet.getInt(4));
-				item.setOrder_price(resultSet.getDouble(5));
-				item.setOrder_date(resultSet.getString(6));
-				item.setPiece(resultSet.getBoolean(7));
-				item.setDisplay(resultSet.getBoolean(8));
 				lista.add(item);
 			}
 		} catch (ClassNotFoundException | SQLException e) {
@@ -318,29 +292,17 @@ public class OrdersDAO {
 	public ArrayList<Order> ReverseOrdersScrollList(int offset){
 		ArrayList<Order> lista=new ArrayList<>();
 		Order item=null;
-		MealDAO daog=new MealDAO();
-		ClientsDAO daoc=new ClientsDAO();
+		
 		try {
 			conn=DatabaseConnector.connect();
-			preparedStatement=conn.prepareStatement("SELECT * FROM orders order by order_id DESC OFFSET ? ROWS FETCH NEXT 10 ROWS ONLY");
+			preparedStatement=conn.prepareStatement("select o.order_id, o.quantity,o.order_price, o.order_date,o.piece,o.display, c.client_id, c.name,c.lastname, c.username,c.password,c.role,c.email, m.meal_id, m.name as mealName, m.price,m.link,m.piece from orders o join clients c on o.client_id=c.client_id join meals m on o.meal_id=m.meal_id order by order_id DESC OFFSET ? ROWS FETCH NEXT 10 ROWS ONLY");
 			preparedStatement.setInt(1, offset);
 			preparedStatement.execute();
 			resultSet=preparedStatement.getResultSet();
 			while(resultSet.next()) {
-				item=new Order();
-				item.setOrder_id(resultSet.getInt(1));
 				
-				Clients client=daoc.selectClientsById(resultSet.getInt(2));
-				item.setClient(client);
+				item=extractOrderFromResultSet(resultSet);
 				
-				Meal glavno=daog.selectMealById(resultSet.getInt(3));
-				item.setMeal(glavno);
-				
-				item.setQuantity(resultSet.getInt(4));
-				item.setOrder_price(resultSet.getDouble(5));
-				item.setOrder_date(resultSet.getString(6));
-				item.setPiece(resultSet.getBoolean(7));
-				item.setDisplay(resultSet.getBoolean(8));
 				lista.add(item);
 			}
 		} catch (ClassNotFoundException | SQLException e) {
@@ -353,76 +315,46 @@ public class OrdersDAO {
 	}
 	
 	public ArrayList<Order> ScrollOrdersByDate(int offset,String date){
-		String sql="SELECT * FROM orders where order_date='"+date+"'";
-		int br=countRows(sql);
+		
 		ArrayList<Order> lista=new ArrayList<>();
 		Order item=null;
-		MealDAO daog=new MealDAO();
-		ClientsDAO daoc=new ClientsDAO();
 		try {
 			conn=DatabaseConnector.connect();
-			preparedStatement=conn.prepareStatement("SELECT * FROM orders where order_date=? order by order_id DESC OFFSET ? ROWS FETCH NEXT 10 ROWS ONLY");
+			preparedStatement=conn.prepareStatement("select o.order_id, o.quantity,o.order_price, o.order_date,o.piece,o.display, c.client_id, c.name,c.lastname, c.username,c.password,c.role,c.email, m.meal_id, m.name as mealName, m.price,m.link,m.piece from orders o join clients c on o.client_id=c.client_id join meals m on o.meal_id=m.meal_id where order_date=? order by order_id DESC OFFSET ? ROWS FETCH NEXT 10 ROWS ONLY");
 			preparedStatement.setString(1, date);
 			preparedStatement.setInt(2, offset);
 			preparedStatement.execute();
 			resultSet=preparedStatement.getResultSet();
 			while(resultSet.next()) {
-				item=new Order();
-				item.setOrder_id(resultSet.getInt(1));
-				
-				Clients client=daoc.selectClientsById(resultSet.getInt(2));
-				item.setClient(client);
-				
-				Meal glavno=daog.selectMealById(resultSet.getInt(3));
-				item.setMeal(glavno);
-				
-				item.setQuantity(resultSet.getInt(4));
-				item.setOrder_price(resultSet.getDouble(5));
-				item.setOrder_date(resultSet.getString(6));
-				item.setPiece(resultSet.getBoolean(7));
-				item.setDisplay(resultSet.getBoolean(8));
+				item=extractOrderFromResultSet(resultSet);
 				lista.add(item);
 			}
-			
+			for (Order order : lista) {
+				order.setNumberOfElements(lista.size());
+			}
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}	finally {
 			this.close();
 	}
-		
-		for (Order order : lista) {
-			order.setNumberOfElements(br);
-		}
-		this.close();
 		return lista;
 	}
 	public ArrayList<Order> ScrollOrdersByStartDate(int offset,String date){
+		
 		ArrayList<Order> lista=new ArrayList<>();
 		Order item=null;
-		MealDAO daog=new MealDAO();
-		ClientsDAO daoc=new ClientsDAO();
+		
 		try {
 			conn=DatabaseConnector.connect();
-			preparedStatement=conn.prepareStatement("SELECT * FROM orders where order_date >= ? OFFSET ? ROWS FETCH NEXT 10 ROWS ONLY");
+			preparedStatement=conn.prepareStatement("select o.order_id, o.quantity,o.order_price, o.order_date,o.piece,o.display, c.client_id, c.name,c.lastname, c.username,c.password,c.role,c.email, m.meal_id, m.name as mealName, m.price,m.link,m.piece from orders o join clients c on o.client_id=c.client_id join meals m on o.meal_id=m.meal_id where order_date >= ? OFFSET ? ROWS FETCH NEXT 10 ROWS ONLY");
 			preparedStatement.setInt(2, offset);
 			preparedStatement.setString(1, date);
 			preparedStatement.execute();
 			resultSet=preparedStatement.getResultSet();
 			while(resultSet.next()) {
-				item=new Order();
-				item.setOrder_id(resultSet.getInt(1));
 				
-				Clients client=daoc.selectClientsById(resultSet.getInt(2));
-				item.setClient(client);
+				item=extractOrderFromResultSet(resultSet);
 				
-				Meal glavno=daog.selectMealById(resultSet.getInt(3));
-				item.setMeal(glavno);
-				
-				item.setQuantity(resultSet.getInt(4));
-				item.setOrder_price(resultSet.getDouble(5));
-				item.setOrder_date(resultSet.getString(6));
-				item.setPiece(resultSet.getBoolean(7));
-				item.setDisplay(resultSet.getBoolean(8));
 				lista.add(item);
 			}
 		} catch (ClassNotFoundException | SQLException e) {
@@ -434,32 +366,21 @@ public class OrdersDAO {
 		return lista;
 	}
 	public ArrayList<Order> ScrollOrdersByEndDate(int offset,String date){
+		
 		ArrayList<Order> lista=new ArrayList<>();
 		Order item=null;
-		MealDAO daog=new MealDAO();
-		ClientsDAO daoc=new ClientsDAO();
+		
 		try {
 			conn=DatabaseConnector.connect();
-			preparedStatement=conn.prepareStatement("SELECT * FROM orders where order_date <= ? OFFSET ? ROWS FETCH NEXT 10 ROWS ONLY");
+			preparedStatement=conn.prepareStatement("select o.order_id, o.quantity,o.order_price, o.order_date,o.piece,o.display, c.client_id, c.name,c.lastname, c.username,c.password,c.role,c.email, m.meal_id, m.name as mealName, m.price,m.link,m.piece from orders o join clients c on o.client_id=c.client_id join meals m on o.meal_id=m.meal_id where order_date <= ? OFFSET ? ROWS FETCH NEXT 10 ROWS ONLY");
 			preparedStatement.setInt(2, offset);
 			preparedStatement.setString(1, date);
 			preparedStatement.execute();
 			resultSet=preparedStatement.getResultSet();
 			while(resultSet.next()) {
-				item=new Order();
-				item.setOrder_id(resultSet.getInt(1));
 				
-				Clients client=daoc.selectClientsById(resultSet.getInt(2));
-				item.setClient(client);
+				item=extractOrderFromResultSet(resultSet);
 				
-				Meal glavno=daog.selectMealById(resultSet.getInt(3));
-				item.setMeal(glavno);
-				
-				item.setQuantity(resultSet.getInt(4));
-				item.setOrder_price(resultSet.getDouble(5));
-				item.setOrder_date(resultSet.getString(6));
-				item.setPiece(resultSet.getBoolean(7));
-				item.setDisplay(resultSet.getBoolean(8));
 				lista.add(item);
 			}
 		} catch (ClassNotFoundException | SQLException e) {
@@ -473,11 +394,10 @@ public class OrdersDAO {
 	public ArrayList<Order> ScrollOrdersByPeriod(int offset,String startDate,String endDate){
 		ArrayList<Order> lista=new ArrayList<>();
 		Order item=null;
-		MealDAO daog=new MealDAO();
-		ClientsDAO daoc=new ClientsDAO();
+		
 		try {
 			conn=DatabaseConnector.connect();
-			preparedStatement=conn.prepareStatement("SELECT * FROM orders where order_date between ? and ? order by order_id DESC OFFSET ? ROWS FETCH NEXT 10 ROWS ONLY");
+			preparedStatement=conn.prepareStatement("select o.order_id, o.quantity,o.order_price, o.order_date,o.piece,o.display, c.client_id, c.name,c.lastname, c.username,c.password,c.role,c.email, m.meal_id, m.name as mealName, m.price,m.link,m.piece from orders o join clients c on o.client_id=c.client_id join meals m on o.meal_id=m.meal_id where order_date between ? and ? order by order_id DESC OFFSET ? ROWS FETCH NEXT 10 ROWS ONLY");
 			preparedStatement.setString(1, startDate);
 			preparedStatement.setString(2, endDate);
 			preparedStatement.setInt(3, offset);
@@ -485,20 +405,9 @@ public class OrdersDAO {
 			preparedStatement.execute();
 			resultSet=preparedStatement.getResultSet();
 			while(resultSet.next()) {
-				item=new Order();
-				item.setOrder_id(resultSet.getInt(1));
 				
-				Clients client=daoc.selectClientsById(resultSet.getInt(2));
-				item.setClient(client);
+				item=extractOrderFromResultSet(resultSet);
 				
-				Meal glavno=daog.selectMealById(resultSet.getInt(3));
-				item.setMeal(glavno);
-				
-				item.setQuantity(resultSet.getInt(4));
-				item.setOrder_price(resultSet.getDouble(5));
-				item.setOrder_date(resultSet.getString(6));
-				item.setPiece(resultSet.getBoolean(7));
-				item.setDisplay(resultSet.getBoolean(8));
 				lista.add(item);
 			}
 		} catch (ClassNotFoundException | SQLException e) {
@@ -510,15 +419,15 @@ public class OrdersDAO {
 		return lista;
 	}
 	public ArrayList<Order> ScrollOrdersCombination(int offset,String startDate,String endDate,int[] idList){
+		
 		ArrayList<Order> lista=new ArrayList<>();
 		Order item=null;
-		MealDAO daog=new MealDAO();
-		ClientsDAO daoc=new ClientsDAO();
+		
 		try {
 			conn=DatabaseConnector.connect();
 			for (int id: idList) {
 			
-			preparedStatement=conn.prepareStatement("SELECT * FROM orders where client_id=? and order_date between ? and ? order by order_id DESC OFFSET ? ROWS FETCH NEXT 10 ROWS ONLY");
+			preparedStatement=conn.prepareStatement("select o.order_id, o.quantity,o.order_price, o.order_date,o.piece,o.display, c.client_id, c.name,c.lastname, c.username,c.password,c.role,c.email, m.meal_id, m.name as mealName, m.price,m.link,m.piece from orders o join clients c on o.client_id=c.client_id join meals m on o.meal_id=m.meal_id where o.client_id=? and order_date between ? and ? order by order_id DESC OFFSET ? ROWS FETCH NEXT 10 ROWS ONLY");
 			preparedStatement.setInt(1, id);
 			preparedStatement.setString(2, startDate);
 			preparedStatement.setString(3, endDate);
@@ -527,20 +436,9 @@ public class OrdersDAO {
 			preparedStatement.execute();
 			resultSet=preparedStatement.getResultSet();
 			while(resultSet.next()) {
-				item=new Order();
-				item.setOrder_id(resultSet.getInt(1));
 				
-				Clients client=daoc.selectClientsById(resultSet.getInt(2));
-				item.setClient(client);
+				item=extractOrderFromResultSet(resultSet);
 				
-				Meal glavno=daog.selectMealById(resultSet.getInt(3));
-				item.setMeal(glavno);
-				
-				item.setQuantity(resultSet.getInt(4));
-				item.setOrder_price(resultSet.getDouble(5));
-				item.setOrder_date(resultSet.getString(6));
-				item.setPiece(resultSet.getBoolean(7));
-				item.setDisplay(resultSet.getBoolean(8));
 				lista.add(item);
 			}}
 		} catch (ClassNotFoundException | SQLException e) {
@@ -552,36 +450,26 @@ public class OrdersDAO {
 		return lista;
 	}
 	public ArrayList<Order> SelectOrdersByClientAndStartdate(int offset,String startDate,int[] idList){
+		
 		ArrayList<Order> lista=new ArrayList<>();
 		Order item=null;
-		MealDAO daog=new MealDAO();
-		ClientsDAO daoc=new ClientsDAO();
+		
 		try {
 			conn=DatabaseConnector.connect();
 			for (int id: idList) {
 			
-			preparedStatement=conn.prepareStatement("SELECT * FROM orders where client_id=? and order_date >=? OFFSET ? ROWS FETCH NEXT 10 ROWS ONLY");
+			preparedStatement=conn.prepareStatement("select o.order_id, o.quantity,o.order_price, o.order_date,o.piece,o.display, c.client_id, c.name,c.lastname, c.username,c.password,c.role,c.email, m.meal_id, m.name as mealName, m.price,m.link,m.piece from orders o join clients c on o.client_id=c.client_id join meals m on o.meal_id=m.meal_id where o.client_id=? and order_date >=? OFFSET ? ROWS FETCH NEXT 10 ROWS ONLY");
 			preparedStatement.setInt(1, id);
 			preparedStatement.setString(2, startDate);
 			preparedStatement.setInt(3, offset);
-			
 			preparedStatement.execute();
+			
 			resultSet=preparedStatement.getResultSet();
+			
 			while(resultSet.next()) {
-				item=new Order();
-				item.setOrder_id(resultSet.getInt(1));
 				
-				Clients client=daoc.selectClientsById(resultSet.getInt(2));
-				item.setClient(client);
+				item=extractOrderFromResultSet(resultSet);
 				
-				Meal glavno=daog.selectMealById(resultSet.getInt(3));
-				item.setMeal(glavno);
-				
-				item.setQuantity(resultSet.getInt(4));
-				item.setOrder_price(resultSet.getDouble(5));
-				item.setOrder_date(resultSet.getString(6));
-				item.setPiece(resultSet.getBoolean(7));
-				item.setDisplay(resultSet.getBoolean(8));
 				lista.add(item);
 			}}
 		} catch (ClassNotFoundException | SQLException e) {
@@ -595,13 +483,12 @@ public class OrdersDAO {
 	public ArrayList<Order> SelectOrdersByClientAndEnddate(int offset,String endDate,int[] idList){
 		ArrayList<Order> lista=new ArrayList<>();
 		Order item=null;
-		MealDAO daog=new MealDAO();
-		ClientsDAO daoc=new ClientsDAO();
+		
 		try {
 			conn=DatabaseConnector.connect();
 			for (int id: idList) {
 			
-			preparedStatement=conn.prepareStatement("SELECT * FROM orders where client_id=? and order_date <=? OFFSET ? ROWS FETCH NEXT 10 ROWS ONLY");
+			preparedStatement=conn.prepareStatement("select o.order_id, o.quantity,o.order_price, o.order_date,o.piece,o.display, c.client_id, c.name,c.lastname, c.username,c.password,c.role,c.email, m.meal_id, m.name as mealName, m.price,m.link,m.piece from orders o join clients c on o.client_id=c.client_id join meals m on o.meal_id=m.meal_id where o.client_id=? and order_date <=? OFFSET ? ROWS FETCH NEXT 10 ROWS ONLY");
 			preparedStatement.setInt(1, id);
 			preparedStatement.setString(2, endDate);
 			preparedStatement.setInt(3, offset);
@@ -609,20 +496,9 @@ public class OrdersDAO {
 			preparedStatement.execute();
 			resultSet=preparedStatement.getResultSet();
 			while(resultSet.next()) {
-				item=new Order();
-				item.setOrder_id(resultSet.getInt(1));
 				
-				Clients client=daoc.selectClientsById(resultSet.getInt(2));
-				item.setClient(client);
+				item=extractOrderFromResultSet(resultSet);
 				
-				Meal glavno=daog.selectMealById(resultSet.getInt(3));
-				item.setMeal(glavno);
-				
-				item.setQuantity(resultSet.getInt(4));
-				item.setOrder_price(resultSet.getDouble(5));
-				item.setOrder_date(resultSet.getString(6));
-				item.setPiece(resultSet.getBoolean(7));
-				item.setDisplay(resultSet.getBoolean(8));
 				lista.add(item);
 			}}
 		} catch (ClassNotFoundException | SQLException e) {
@@ -636,13 +512,12 @@ public class OrdersDAO {
 	public ArrayList<Order> SelectOrdersByClientAndDate(int offset,String Date,int[] idList){
 		ArrayList<Order> lista=new ArrayList<>();
 		Order item=null;
-		MealDAO daog=new MealDAO();
-		ClientsDAO daoc=new ClientsDAO();
+		
 		try {
 			conn=DatabaseConnector.connect();
 			for (int id: idList) {
 			
-			preparedStatement=conn.prepareStatement("SELECT * FROM orders where client_id=? and order_date =? order by order_id DESC OFFSET ? ROWS FETCH NEXT 10 ROWS ONLY");
+			preparedStatement=conn.prepareStatement("select o.order_id, o.quantity,o.order_price, o.order_date,o.piece,o.display, c.client_id, c.name,c.lastname, c.username,c.password,c.role,c.email, m.meal_id, m.name as mealName, m.price,m.link,m.piece from orders o join clients c on o.client_id=c.client_id join meals m on o.meal_id=m.meal_id where o.client_id=? and order_date =? order by order_id DESC OFFSET ? ROWS FETCH NEXT 10 ROWS ONLY");
 			preparedStatement.setInt(1, id);
 			preparedStatement.setString(2, Date);
 			preparedStatement.setInt(3, offset);
@@ -650,20 +525,9 @@ public class OrdersDAO {
 			preparedStatement.execute();
 			resultSet=preparedStatement.getResultSet();
 			while(resultSet.next()) {
-				item=new Order();
-				item.setOrder_id(resultSet.getInt(1));
 				
-				Clients client=daoc.selectClientsById(resultSet.getInt(2));
-				item.setClient(client);
+				item=extractOrderFromResultSet(resultSet);
 				
-				Meal glavno=daog.selectMealById(resultSet.getInt(3));
-				item.setMeal(glavno);
-				
-				item.setQuantity(resultSet.getInt(4));
-				item.setOrder_price(resultSet.getDouble(5));
-				item.setOrder_date(resultSet.getString(6));
-				item.setPiece(resultSet.getBoolean(7));
-				item.setDisplay(resultSet.getBoolean(8));
 				lista.add(item);
 			}}
 		} catch (ClassNotFoundException | SQLException e) {
@@ -677,31 +541,18 @@ public class OrdersDAO {
 	public ArrayList<Order> ScrollOrdersByClient(int offset,int id){
 		ArrayList<Order> lista=new ArrayList<>();
 		Order item=null;
-		MealDAO daog=new MealDAO();
-		ClientsDAO daoc=new ClientsDAO();
 		try {
 			conn=DatabaseConnector.connect();
-			preparedStatement=conn.prepareStatement("SELECT * FROM orders where client_id=? order by order_id DESC OFFSET ? ROWS FETCH NEXT 10 ROWS ONLY");
+			preparedStatement=conn.prepareStatement("select o.order_id, o.quantity,o.order_price, o.order_date,o.piece,o.display, c.client_id, c.name,c.lastname, c.username,c.password,c.role,c.email, m.meal_id, m.name as mealName, m.price,m.link,m.piece from orders o join clients c on o.client_id=c.client_id join meals m on o.meal_id=m.meal_id where o.client_id=? order by order_id DESC OFFSET ? ROWS FETCH NEXT 10 ROWS ONLY");
 			preparedStatement.setInt(1, id);
 			preparedStatement.setInt(2, offset);
 			
 			preparedStatement.execute();
 			resultSet=preparedStatement.getResultSet();
 			while(resultSet.next()) {
-				item=new Order();
-				item.setOrder_id(resultSet.getInt(1));
 				
-				Clients client=daoc.selectClientsById(resultSet.getInt(2));
-				item.setClient(client);
+				item=extractOrderFromResultSet(resultSet);
 				
-				Meal glavno=daog.selectMealById(resultSet.getInt(3));
-				item.setMeal(glavno);
-				
-				item.setQuantity(resultSet.getInt(4));
-				item.setOrder_price(resultSet.getDouble(5));
-				item.setOrder_date(resultSet.getString(6));
-				item.setPiece(resultSet.getBoolean(7));
-				item.setDisplay(resultSet.getBoolean(8));
 				lista.add(item);
 			}
 		} catch (ClassNotFoundException | SQLException e) {
@@ -715,37 +566,22 @@ public class OrdersDAO {
 	public ArrayList<Order> SelectOrdersByClients(int offset,int[] idList){
 		ArrayList<Order> lista=new ArrayList<>();
 		Order item=null;
-		MealDAO daog=new MealDAO();
-		ClientsDAO daoc=new ClientsDAO();
 		try {
 			conn=DatabaseConnector.connect();
 			for (int id: idList) {
 				
-				preparedStatement=conn.prepareStatement("SELECT * FROM orders where client_id=? order by order_id DESC OFFSET ? ROWS FETCH NEXT 10 ROWS ONLY");
+				preparedStatement=conn.prepareStatement("select o.order_id, o.quantity,o.order_price, o.order_date,o.piece,o.display, c.client_id, c.name,c.lastname, c.username,c.password,c.role,c.email, m.meal_id, m.name as mealName, m.price,m.link,m.piece from orders o join clients c on o.client_id=c.client_id join meals m on o.meal_id=m.meal_id where o.client_id=? order by order_id DESC OFFSET ? ROWS FETCH NEXT 10 ROWS ONLY");
 				preparedStatement.setInt(1, id);
 				preparedStatement.setInt(2, offset);
 				
 				preparedStatement.execute();
 				resultSet=preparedStatement.getResultSet();
 				while(resultSet.next()) {
-					item=new Order();
-					item.setOrder_id(resultSet.getInt(1));
 					
-					Clients client=daoc.selectClientsById(resultSet.getInt(2));
-					item.setClient(client);
+					item=extractOrderFromResultSet(resultSet);
 					
-					Meal glavno=daog.selectMealById(resultSet.getInt(3));
-					item.setMeal(glavno);
-					
-					item.setQuantity(resultSet.getInt(4));
-					item.setOrder_price(resultSet.getDouble(5));
-					item.setOrder_date(resultSet.getString(6));
-					item.setPiece(resultSet.getBoolean(7));
-					item.setDisplay(resultSet.getBoolean(8));
 					lista.add(item);
-			}
-			
-			}
+			}}
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}

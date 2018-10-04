@@ -43,8 +43,8 @@ public class MealResource {
 	}
 	@GET
 	@Path("/scroll")
-	public ArrayList<Meal> getScrollMeal(@QueryParam("offset") int offset){
-		return controller.scrollMeal(offset);
+	public Response getScrollMeal(@QueryParam("offset") int offset){
+		return Response.ok().entity(controller.scrollMeal(offset)).build();
 	}
 	@GET
 	@Path("/{id}")

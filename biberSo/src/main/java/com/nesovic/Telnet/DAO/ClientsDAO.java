@@ -40,10 +40,22 @@ public class ClientsDAO {
 			try {
 				conn.close();
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
+	}
+	private Clients extractClientFromResultSet(ResultSet resultSet) throws SQLException {
+		Clients client = new Clients();
+		
+		client.setClient_id(resultSet.getInt("client_id"));
+		client.setName(resultSet.getString("name"));
+		client.setLastname(resultSet.getString("lastname"));
+		client.setUsername(resultSet.getString("username"));
+		client.setPassword(resultSet.getString("password"));
+		client.setRole(resultSet.getString("role"));
+		client.setEmail(resultSet.getString("email"));
+		
+		return client;
 	}
 	public ArrayList<Clients> selectClients(){
 		ArrayList<Clients> lista=new ArrayList<>();
@@ -55,14 +67,9 @@ public class ClientsDAO {
 			preparedStatement.execute();
 			resultSet=preparedStatement.getResultSet();
 			while(resultSet.next()) {
-				client=new Clients();
-				client.setClient_id(resultSet.getInt(1));
-				client.setName(resultSet.getString(2));
-				client.setLastname(resultSet.getString(3));
-				client.setUsername(resultSet.getString(4));
-				client.setPassword(resultSet.getString(5));
-				client.setEmail(resultSet.getString(7));
-				client.setRole(resultSet.getString(6));
+				
+				client=extractClientFromResultSet(resultSet);
+				
 				lista.add(client);
 			}
 		} catch (ClassNotFoundException | SQLException e) {
@@ -83,14 +90,9 @@ public class ClientsDAO {
 			preparedStatement.execute();
 			resultSet=preparedStatement.getResultSet();
 			while(resultSet.next()) {
-				client=new Clients();
-				client.setClient_id(resultSet.getInt(1));
-				client.setName(resultSet.getString(2));
-				client.setLastname(resultSet.getString(3));
-				client.setUsername(resultSet.getString(4));
-				client.setPassword(resultSet.getString(5));
-				client.setEmail(resultSet.getString(7));
-				client.setRole(resultSet.getString(6));
+				
+				client=extractClientFromResultSet(resultSet);
+				
 				lista.add(client);
 			}
 		} catch (ClassNotFoundException | SQLException e) {
@@ -111,14 +113,7 @@ public class ClientsDAO {
 			preparedStatement.execute();
 			resultSet=preparedStatement.getResultSet();
 			if(resultSet.next()) {
-				client=new Clients();
-				client.setClient_id(resultSet.getInt(1));
-				client.setName(resultSet.getString(2));
-				client.setLastname(resultSet.getString(3));
-				client.setUsername(resultSet.getString(4));
-				client.setPassword(resultSet.getString(5));
-				client.setEmail(resultSet.getString(7));
-				client.setRole(resultSet.getString(6));
+				client=extractClientFromResultSet(resultSet);
 			}
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
@@ -188,14 +183,7 @@ public class ClientsDAO {
 		preparedStatement.execute();
 		resultSet=preparedStatement.getResultSet();
 		if(resultSet.next()) {
-			client=new Clients();
-			client.setClient_id(resultSet.getInt(1));
-			client.setName(resultSet.getString(2));
-			client.setLastname(resultSet.getString(3));
-			client.setUsername(resultSet.getString(4));
-			client.setPassword(resultSet.getString(5));
-			client.setRole(resultSet.getString(6));
-			client.setEmail(resultSet.getString(7));
+			client=extractClientFromResultSet(resultSet);
 		}
 		String userPassword=client.getPassword();
 		if(password.equals(userPassword)) {

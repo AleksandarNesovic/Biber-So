@@ -1,11 +1,10 @@
 package com.nesovic.Telnet.controller;
 
 
-import java.sql.SQLException;
+
 import java.util.ArrayList;
 
 import com.nesovic.Telnet.DAO.OrdersDAO;
-import com.nesovic.Telnet.model.Clients;
 import com.nesovic.Telnet.model.Order;
 
 public class OrdersController {

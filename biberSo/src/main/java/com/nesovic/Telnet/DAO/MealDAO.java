@@ -36,32 +36,40 @@ public class MealDAO {
 			try {
 				conn.close();
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 	}
+	private Meal extractMealFromResultSet(ResultSet resultSet) throws SQLException {
+		Meal meal=new Meal();
+		meal.setMeal_id(resultSet.getInt("meal_id"));
+		
+		Category category=new Category();
+		category.setCategory_id(resultSet.getInt("category_id"));
+		category.setLink(resultSet.getString("categoryLink"));
+		category.setName(resultSet.getString("categoryName"));
+		meal.setCategory(category);
+		
+		meal.setName(resultSet.getString("name"));
+		meal.setPrice(resultSet.getDouble("price"));
+		meal.setLink(resultSet.getString("link"));
+		meal.setPiece(resultSet.getBoolean("piece"));
+		
+		return meal;
+	}
 	public ArrayList<Meal> selectMeal(){
 		ArrayList<Meal> lista=new ArrayList<>();
 		Meal meal=null;
-		CategoryDAO dao=new CategoryDAO();
 
 		try {
 			conn = DatabaseConnector.connect();
-			preparedStatement=conn.prepareStatement("SELECT * FROM meals");
+			preparedStatement=conn.prepareStatement("select m.meal_id, m.name, m.price, m.link, m.piece, c.category_id, c.link as categoryLink, c.name as categoryName from meals m join category c on m.category_id=c.category_id");
 			preparedStatement.execute();
 			resultSet=preparedStatement.getResultSet();
 			while(resultSet.next()) {
-				meal=new Meal();
-				meal.setMeal_id(resultSet.getInt(1));
 				
-				Category category=dao.selectCategoryById(resultSet.getInt(2));
-				meal.setCategory(category);
+				meal=extractMealFromResultSet(resultSet);
 				
-				meal.setName(resultSet.getString(3));
-				meal.setPrice(resultSet.getDouble(4));
-				meal.setLink(resultSet.getString(5));
-				meal.setPiece(resultSet.getBoolean(6));
 				lista.add(meal);
 			}
 		} catch (ClassNotFoundException | SQLException e) {
@@ -72,29 +80,39 @@ public class MealDAO {
 	}
 		return lista;
 	}
+	public int countMeals(String sql) {
+		int br=0;
+		try {
+			conn=DatabaseConnector.connect();
+			preparedStatement=conn.prepareStatement(sql);
+			preparedStatement.execute();
+			resultSet=preparedStatement.getResultSet();
+			while(resultSet.next()) {
+				br++;
+			}
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		}finally {
+			this.close();
+		}
+		return br;
+	}
 	public ArrayList<Meal> scrollMeal(int offset){
 		ArrayList<Meal> lista=new ArrayList<>();
 		Meal meal=null;
-		CategoryDAO dao=new CategoryDAO();
 
 		try {
 			conn = DatabaseConnector.connect();
-			preparedStatement=conn.prepareStatement("SELECT * FROM meals OFFSET ? ROWS FETCH NEXT 10 ROWS ONLY");
+			preparedStatement=conn.prepareStatement("select m.meal_id, m.name, m.price, m.link, m.piece, c.category_id, c.link as categoryLink, c.name as categoryName from meals m join category c on m.category_id=c.category_id OFFSET ? ROWS FETCH NEXT 10 ROWS ONLY");
 			preparedStatement.setInt(1, offset);
 			preparedStatement.execute();
 			resultSet=preparedStatement.getResultSet();
 			while(resultSet.next()) {
-				meal=new Meal();
-				meal.setMeal_id(resultSet.getInt(1));
-				
-				Category category=dao.selectCategoryById(resultSet.getInt(2));
-				meal.setCategory(category);
-				
-				meal.setName(resultSet.getString(3));
-				meal.setPrice(resultSet.getDouble(4));
-				meal.setLink(resultSet.getString(5));
-				meal.setPiece(resultSet.getBoolean(6));
+				meal=extractMealFromResultSet(resultSet);
 				lista.add(meal);
+			}
+			for (Meal meal2 : lista) {
+				meal2.setNumberOfMeals(lista.size());
 			}
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
@@ -107,24 +125,16 @@ public class MealDAO {
 	public ArrayList<Meal> selectMealByPrice(){
 		ArrayList<Meal> lista=new ArrayList<>();
 		Meal meal=null;
-		CategoryDAO dao=new CategoryDAO();
 
 		try {
 			conn = DatabaseConnector.connect();
-			preparedStatement=conn.prepareStatement("SELECT * FROM meals order by price");
+			preparedStatement=conn.prepareStatement("select m.meal_id, m.name, m.price, m.link, m.piece, c.category_id, c.link as categoryLink, c.name as categoryName from meals m join category c on m.category_id=c.category_id order by price");
 			preparedStatement.execute();
 			resultSet=preparedStatement.getResultSet();
 			while(resultSet.next()) {
-				meal=new Meal();
-				meal.setMeal_id(resultSet.getInt(1));
 				
-				Category category=dao.selectCategoryById(resultSet.getInt(2));
-				meal.setCategory(category);
+				meal=extractMealFromResultSet(resultSet);
 				
-				meal.setName(resultSet.getString(3));
-				meal.setPrice(resultSet.getDouble(4));
-				meal.setLink(resultSet.getString(5));
-				meal.setPiece(resultSet.getBoolean(6));
 				lista.add(meal);
 			}
 		} catch (ClassNotFoundException | SQLException e) {
@@ -138,25 +148,15 @@ public class MealDAO {
 	public ArrayList<Meal> selectMealByCategory(int id){
 		ArrayList<Meal> lista=new ArrayList<>();
 		Meal meal=null;
-		CategoryDAO dao=new CategoryDAO();
 
 		try {
 			conn = DatabaseConnector.connect();
-			preparedStatement=conn.prepareStatement("SELECT * FROM meals where category_id=?");
+			preparedStatement=conn.prepareStatement("select m.meal_id, m.name, m.price, m.link, m.piece, c.category_id, c.link as categoryLink, c.name as categoryName from meals m join category c on m.category_id=c.category_id where c.category_id=?");
 			preparedStatement.setInt(1, id);
 			preparedStatement.execute();
 			resultSet=preparedStatement.getResultSet();
 			while(resultSet.next()) {
-				meal=new Meal();
-				meal.setMeal_id(resultSet.getInt(1));
-				
-				Category category=dao.selectCategoryById(resultSet.getInt(2));
-				meal.setCategory(category);
-				
-				meal.setName(resultSet.getString(3));
-				meal.setPrice(resultSet.getDouble(4));
-				meal.setLink(resultSet.getString(5));
-				meal.setPiece(resultSet.getBoolean(6));
+				meal=extractMealFromResultSet(resultSet);
 				lista.add(meal);
 			}
 		} catch (ClassNotFoundException | SQLException e) {
@@ -170,26 +170,16 @@ public class MealDAO {
 	public ArrayList<Meal> scrollMealByCategory(int id,int offset){
 		ArrayList<Meal> lista=new ArrayList<>();
 		Meal meal=null;
-		CategoryDAO dao=new CategoryDAO();
 
 		try {
 			conn = DatabaseConnector.connect();
-			preparedStatement=conn.prepareStatement("SELECT * FROM meals where category_id=? OFFSET ? ROWS FETCH NEXT 5 ROWS ONLY");
+			preparedStatement=conn.prepareStatement("select m.meal_id, m.name, m.price, m.link, m.piece, c.category_id, c.link as categoryLink, c.name as categoryName from meals m join category c on m.category_id=c.category_id where c.category_id=? OFFSET ? ROWS FETCH NEXT 5 ROWS ONLY");
 			preparedStatement.setInt(1, id);
 			preparedStatement.setInt(2, offset);
 			preparedStatement.execute();
 			resultSet=preparedStatement.getResultSet();
 			while(resultSet.next()) {
-				meal=new Meal();
-				meal.setMeal_id(resultSet.getInt(1));
-				
-				Category category=dao.selectCategoryById(resultSet.getInt(2));
-				meal.setCategory(category);
-				
-				meal.setName(resultSet.getString(3));
-				meal.setPrice(resultSet.getDouble(4));
-				meal.setLink(resultSet.getString(5));
-				meal.setPiece(resultSet.getBoolean(6));
+				meal=extractMealFromResultSet(resultSet);
 				lista.add(meal);
 			}
 		} catch (ClassNotFoundException | SQLException e) {
@@ -202,25 +192,15 @@ public class MealDAO {
 	}
 	public Meal selectMealById(int id){
 		Meal meal=null;
-		CategoryDAO dao=new CategoryDAO();
 
 		try {
 			conn = DatabaseConnector.connect();
-			preparedStatement=conn.prepareStatement("SELECT * FROM meals where meal_id=?");
+			preparedStatement=conn.prepareStatement("select m.meal_id, m.name, m.price, m.link, m.piece, c.category_id, c.link as categoryLink, c.name as categoryName from meals m join category c on m.category_id=c.category_id where meal_id=?");
 			preparedStatement.setInt(1, id);
 			preparedStatement.execute();
 			resultSet=preparedStatement.getResultSet();
 			if(resultSet.next()) {
-				meal=new Meal();
-				meal.setMeal_id(resultSet.getInt(1));
-				
-				Category category=dao.selectCategoryById(resultSet.getInt(2));
-				meal.setCategory(category);
-				
-				meal.setName(resultSet.getString(3));
-				meal.setPrice(resultSet.getDouble(4));
-				meal.setLink(resultSet.getString(5));
-				meal.setPiece(resultSet.getBoolean(6));
+				meal=extractMealFromResultSet(resultSet);
 			}
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();

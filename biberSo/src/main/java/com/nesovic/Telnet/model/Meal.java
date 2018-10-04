@@ -8,6 +8,15 @@ public class Meal {
 	private double price;
 	private String link;
 	private boolean piece;
+	private int numberOfMeals;
+	public int getNumberOfMeals() {
+		return numberOfMeals;
+	}
+
+	public void setNumberOfMeals(int numberOfMeals) {
+		this.numberOfMeals = numberOfMeals;
+	}
+
 	public Meal() {
 		super();
 		// TODO Auto-generated constructor stub
