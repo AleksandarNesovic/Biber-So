@@ -11,6 +11,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Formatter;
 
+import javax.naming.NamingException;
+
 import com.nesovic.Telnet.exception.AuthFaildException;
 import com.nesovic.Telnet.model.Clients;
 import com.nesovic.Telnet.model.Credentials;
@@ -72,7 +74,7 @@ public class ClientsDAO {
 				
 				lista.add(client);
 			}
-		} catch (ClassNotFoundException | SQLException e) {
+		} catch (ClassNotFoundException | SQLException | NamingException e) {
 			e.printStackTrace();
 		}
 		finally {
@@ -95,7 +97,7 @@ public class ClientsDAO {
 				
 				lista.add(client);
 			}
-		} catch (ClassNotFoundException | SQLException e) {
+		} catch (ClassNotFoundException | SQLException | NamingException e) {
 			e.printStackTrace();
 		}
 		finally {
@@ -115,7 +117,7 @@ public class ClientsDAO {
 			if(resultSet.next()) {
 				client=extractClientFromResultSet(resultSet);
 			}
-		} catch (ClassNotFoundException | SQLException e) {
+		} catch (ClassNotFoundException | SQLException | NamingException e) {
 			e.printStackTrace();
 		}
 		finally {
@@ -136,6 +138,9 @@ public class ClientsDAO {
 			preparedStatement.execute();
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
+		} catch (NamingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		finally {
 			this.close();
@@ -154,7 +159,7 @@ public class ClientsDAO {
 			preparedStatement.setString(5, c.getRole());
 			preparedStatement.setInt(7, c.getClient_id());
 			preparedStatement.execute();
-		} catch (ClassNotFoundException | SQLException e) {
+		} catch (ClassNotFoundException | SQLException | NamingException e) {
 			e.printStackTrace();
 		}
 		finally {
@@ -169,7 +174,7 @@ public class ClientsDAO {
 			preparedStatement=conn.prepareStatement("delete from clients where client_id=?");
 			preparedStatement.setInt(1, id);
 			preparedStatement.execute();
-		} catch (ClassNotFoundException | SQLException e) {
+		} catch (ClassNotFoundException | SQLException | NamingException e) {
 			e.printStackTrace();
 		}
 		close();
@@ -177,7 +182,12 @@ public class ClientsDAO {
 	public Clients Login(Credentials crd) throws ClassNotFoundException, SQLException, AuthFaildException {
 		Clients client=null;
 		String password=encryptPassword(crd.getPassword());
-		conn=DatabaseConnector.connect();
+		try {
+			conn=DatabaseConnector.connect();
+		} catch (NamingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		preparedStatement=conn.prepareStatement("select * from clients where username=?");
 		preparedStatement.setString(1, crd.getUsername());
 		preparedStatement.execute();

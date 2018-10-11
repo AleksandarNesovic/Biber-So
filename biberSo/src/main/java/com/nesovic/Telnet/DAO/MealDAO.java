@@ -8,6 +8,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import javax.naming.NamingException;
+
 import com.nesovic.Telnet.model.Category;
 import com.nesovic.Telnet.model.Meal;
 
@@ -72,7 +74,7 @@ public class MealDAO {
 				
 				lista.add(meal);
 			}
-		} catch (ClassNotFoundException | SQLException e) {
+		} catch (ClassNotFoundException | SQLException | NamingException e) {
 			e.printStackTrace();
 		}
 		finally {
@@ -90,7 +92,7 @@ public class MealDAO {
 			while(resultSet.next()) {
 				br++;
 			}
-		} catch (ClassNotFoundException | SQLException e) {
+		} catch (ClassNotFoundException | SQLException | NamingException e) {
 			e.printStackTrace();
 		}finally {
 			this.close();
@@ -98,6 +100,8 @@ public class MealDAO {
 		return br;
 	}
 	public ArrayList<Meal> scrollMeal(int offset){
+		String sql="select * from meals";
+		int br=countMeals(sql);
 		ArrayList<Meal> lista=new ArrayList<>();
 		Meal meal=null;
 
@@ -112,9 +116,9 @@ public class MealDAO {
 				lista.add(meal);
 			}
 			for (Meal meal2 : lista) {
-				meal2.setNumberOfMeals(lista.size());
+				meal2.setNumberOfMeals(br);
 			}
-		} catch (ClassNotFoundException | SQLException e) {
+		} catch (ClassNotFoundException | SQLException | NamingException e) {
 			e.printStackTrace();
 		}
 		finally {
@@ -137,7 +141,7 @@ public class MealDAO {
 				
 				lista.add(meal);
 			}
-		} catch (ClassNotFoundException | SQLException e) {
+		} catch (ClassNotFoundException | SQLException | NamingException e) {
 			e.printStackTrace();
 		}
 		finally {
@@ -159,7 +163,7 @@ public class MealDAO {
 				meal=extractMealFromResultSet(resultSet);
 				lista.add(meal);
 			}
-		} catch (ClassNotFoundException | SQLException e) {
+		} catch (ClassNotFoundException | SQLException | NamingException e) {
 			e.printStackTrace();
 		}
 		finally {
@@ -182,7 +186,7 @@ public class MealDAO {
 				meal=extractMealFromResultSet(resultSet);
 				lista.add(meal);
 			}
-		} catch (ClassNotFoundException | SQLException e) {
+		} catch (ClassNotFoundException | SQLException | NamingException e) {
 			e.printStackTrace();
 		}
 		finally {
@@ -202,7 +206,7 @@ public class MealDAO {
 			if(resultSet.next()) {
 				meal=extractMealFromResultSet(resultSet);
 			}
-		} catch (ClassNotFoundException | SQLException e) {
+		} catch (ClassNotFoundException | SQLException | NamingException e) {
 			e.printStackTrace();
 		}
 		finally {
@@ -222,7 +226,7 @@ public class MealDAO {
 			preparedStatement.setBoolean(5, g.isPiece());
 			preparedStatement.execute();
 
-		} catch (ClassNotFoundException | SQLException e) {
+		} catch (ClassNotFoundException | SQLException | NamingException e) {
 			e.printStackTrace();
 		}
 		finally {
@@ -243,7 +247,7 @@ public class MealDAO {
 			preparedStatement.setInt(6, g.getMeal_id());
 			preparedStatement.execute();
 
-		} catch (ClassNotFoundException | SQLException e) {
+		} catch (ClassNotFoundException | SQLException | NamingException e) {
 			e.printStackTrace();
 		}
 		finally {
@@ -259,7 +263,7 @@ public class MealDAO {
 			preparedStatement.setInt(1, id);
 			preparedStatement.execute();
 
-		} catch (ClassNotFoundException | SQLException e) {
+		} catch (ClassNotFoundException | SQLException | NamingException e) {
 			e.printStackTrace();
 		}
 		finally {

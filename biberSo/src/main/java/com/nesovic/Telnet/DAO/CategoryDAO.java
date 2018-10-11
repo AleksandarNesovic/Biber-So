@@ -1,10 +1,13 @@
 package com.nesovic.Telnet.DAO;
 
 import java.sql.Connection;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+
+import javax.naming.NamingException;
 
 import com.nesovic.Telnet.model.Category;
 
@@ -57,7 +60,7 @@ public class CategoryDAO {
 				category=extractCategoryFromResultSet(resultSet);
 				lista.add(category);
 			}
-		} catch (ClassNotFoundException | SQLException e) {
+		} catch (ClassNotFoundException | SQLException | NamingException e) {
 			e.printStackTrace();
 		}
 		finally {
@@ -77,7 +80,7 @@ public class CategoryDAO {
 			if(resultSet.next()) {
 				category=extractCategoryFromResultSet(resultSet);
 			}
-		} catch (ClassNotFoundException | SQLException e) {
+		} catch (ClassNotFoundException | SQLException | NamingException e) {
 			e.printStackTrace();
 		}
 		finally {
@@ -94,7 +97,7 @@ public class CategoryDAO {
 			preparedStatement.setString(2, g.getLink());
 			preparedStatement.execute();
 
-		} catch (ClassNotFoundException | SQLException e) {
+		} catch (ClassNotFoundException | SQLException | NamingException e) {
 			e.printStackTrace();
 		}
 		finally {
@@ -112,7 +115,7 @@ public class CategoryDAO {
 			preparedStatement.setInt(3, g.getCategory_id());
 			preparedStatement.execute();
 
-		} catch (ClassNotFoundException | SQLException e) {
+		} catch (ClassNotFoundException | SQLException | NamingException e) {
 			e.printStackTrace();
 		}
 		finally {
@@ -128,7 +131,7 @@ public class CategoryDAO {
 			preparedStatement.setInt(1, id);
 			preparedStatement.execute();
 
-		} catch (ClassNotFoundException | SQLException e) {
+		} catch (ClassNotFoundException | SQLException | NamingException e) {
 			e.printStackTrace();
 		}
 		finally {

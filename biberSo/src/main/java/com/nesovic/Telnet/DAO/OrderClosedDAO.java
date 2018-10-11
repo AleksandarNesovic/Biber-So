@@ -5,6 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import javax.naming.NamingException;
+
 public class OrderClosedDAO {
 	private Connection conn=null;
 	private PreparedStatement preparedStatement = null;
@@ -41,7 +43,7 @@ public class OrderClosedDAO {
 			preparedStatement.setBoolean(2, status);
 			preparedStatement.execute();
 			
-		} catch (ClassNotFoundException | SQLException e) {
+		} catch (ClassNotFoundException | SQLException | NamingException e) {
 			e.printStackTrace();
 		}
 		finally {
@@ -56,7 +58,7 @@ public class OrderClosedDAO {
 			preparedStatement.setString(2, date);
 			preparedStatement.execute();
 			
-		} catch (ClassNotFoundException | SQLException e) {
+		} catch (ClassNotFoundException | SQLException | NamingException e) {
 			e.printStackTrace();
 		}
 		finally {
@@ -75,7 +77,7 @@ public class OrderClosedDAO {
 			while(resultSet.next()) {
 				status=resultSet.getBoolean(1);
 			}
-		} catch (ClassNotFoundException | SQLException e) {
+		} catch (ClassNotFoundException | SQLException | NamingException e) {
 			e.printStackTrace();
 		}
 		finally {

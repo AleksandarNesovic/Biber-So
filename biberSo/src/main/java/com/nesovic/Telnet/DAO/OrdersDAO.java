@@ -12,6 +12,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import javax.naming.NamingException;
+
 import com.nesovic.Telnet.model.Clients;
 import com.nesovic.Telnet.model.Meal;
 import com.nesovic.Telnet.model.Order;
@@ -72,24 +74,22 @@ public class OrdersDAO {
 		return item;
 	}
 	
-//	public int countRows(String sql) {
-//		int br=0;
-//		try {
-//			conn=DatabaseConnector.connect();
-//			
-//			preparedStatement=conn.prepareStatement(sql);
-//			preparedStatement.execute();
-//			resultSet=preparedStatement.getResultSet();
-//			while(resultSet.next()) {
-//				br++;
-//			}
-//		} catch ( SQLException | ClassNotFoundException e) {
-//			e.printStackTrace();
-//		}finally{
-//			this.close();
-//		}
-//		return br;
-//	}
+	public int countRows(String sql) {
+		int br=0;
+		try {
+			conn=DatabaseConnector.connect();
+			
+			preparedStatement=conn.prepareStatement(sql);
+			preparedStatement.execute();
+			resultSet=preparedStatement.getResultSet();
+			while(resultSet.next()) {
+				br++;
+			}
+		} catch ( SQLException | ClassNotFoundException | NamingException e) {
+			e.printStackTrace();
+		}
+		return br;
+	}
 	public ArrayList<Order> selectOrders(){
 		ArrayList<Order> lista=new ArrayList<>();
 		Order item=null;
@@ -110,7 +110,7 @@ public class OrdersDAO {
 				order.setNumberOfElements(lista.size());
 			}
 			
-		} catch (ClassNotFoundException | SQLException e) {
+		} catch (ClassNotFoundException | SQLException | NamingException e) {
 			e.printStackTrace();
 		}
 		finally {
@@ -134,7 +134,7 @@ public class OrdersDAO {
 				
 				lista.add(item);
 			}
-		} catch (ClassNotFoundException | SQLException e) {
+		} catch (ClassNotFoundException | SQLException | NamingException e) {
 			e.printStackTrace();
 		}
 		finally {
@@ -155,7 +155,7 @@ public class OrdersDAO {
 				
 				item=extractOrderFromResultSet(resultSet);
 			}
-		} catch (ClassNotFoundException | SQLException e) {
+		} catch (ClassNotFoundException | SQLException | NamingException e) {
 			e.printStackTrace();
 		}
 		finally {
@@ -182,7 +182,7 @@ public class OrdersDAO {
 			preparedStatement.setBoolean(6, item.isPiece());
 			preparedStatement.setBoolean(7, item.isDisplay());
 			preparedStatement.execute();
-		} catch (ClassNotFoundException | SQLException  e) {
+		} catch (ClassNotFoundException | SQLException | NamingException  e) {
 			e.printStackTrace();
 		}
 		finally {
@@ -227,7 +227,7 @@ public class OrdersDAO {
 			preparedStatement.setBoolean(7, item.isDisplay());
 			preparedStatement.setInt(8, item.getOrder_id());
 			preparedStatement.execute();
-		} catch (ClassNotFoundException | SQLException e) {
+		} catch (ClassNotFoundException | SQLException | NamingException e) {
 			e.printStackTrace();
 		}
 		finally {
@@ -257,7 +257,7 @@ public class OrdersDAO {
 				
 		
 		
-		} }catch (ClassNotFoundException | SQLException e) {
+		} }catch (ClassNotFoundException | SQLException | NamingException e) {
 			e.printStackTrace();
 		}
 			finally {
@@ -281,7 +281,7 @@ public class OrdersDAO {
 				
 				lista.add(item);
 			}
-		} catch (ClassNotFoundException | SQLException e) {
+		} catch (ClassNotFoundException | SQLException | NamingException e) {
 			e.printStackTrace();
 		}
 		finally {
@@ -305,7 +305,7 @@ public class OrdersDAO {
 				
 				lista.add(item);
 			}
-		} catch (ClassNotFoundException | SQLException e) {
+		} catch (ClassNotFoundException | SQLException | NamingException e) {
 			e.printStackTrace();
 		}
 		finally {
@@ -315,7 +315,8 @@ public class OrdersDAO {
 	}
 	
 	public ArrayList<Order> ScrollOrdersByDate(int offset,String date){
-		
+		String sql="Select * from orders where order_date='"+date+"'";
+		int br=countRows(sql);
 		ArrayList<Order> lista=new ArrayList<>();
 		Order item=null;
 		try {
@@ -330,13 +331,11 @@ public class OrdersDAO {
 				lista.add(item);
 			}
 			for (Order order : lista) {
-				order.setNumberOfElements(lista.size());
+				order.setNumberOfElements(br);
 			}
-		} catch (ClassNotFoundException | SQLException e) {
+		} catch (ClassNotFoundException | SQLException | NamingException e) {
 			e.printStackTrace();
-		}	finally {
-			this.close();
-	}
+		}
 		return lista;
 	}
 	public ArrayList<Order> ScrollOrdersByStartDate(int offset,String date){
@@ -357,7 +356,7 @@ public class OrdersDAO {
 				
 				lista.add(item);
 			}
-		} catch (ClassNotFoundException | SQLException e) {
+		} catch (ClassNotFoundException | SQLException | NamingException e) {
 			e.printStackTrace();
 		}
 		finally {
@@ -383,7 +382,7 @@ public class OrdersDAO {
 				
 				lista.add(item);
 			}
-		} catch (ClassNotFoundException | SQLException e) {
+		} catch (ClassNotFoundException | SQLException | NamingException e) {
 			e.printStackTrace();
 		}
 		finally {
@@ -410,7 +409,7 @@ public class OrdersDAO {
 				
 				lista.add(item);
 			}
-		} catch (ClassNotFoundException | SQLException e) {
+		} catch (ClassNotFoundException | SQLException | NamingException e) {
 			e.printStackTrace();
 		}
 		finally {
@@ -441,7 +440,7 @@ public class OrdersDAO {
 				
 				lista.add(item);
 			}}
-		} catch (ClassNotFoundException | SQLException e) {
+		} catch (ClassNotFoundException | SQLException | NamingException e) {
 			e.printStackTrace();
 		}
 		finally {
@@ -472,7 +471,7 @@ public class OrdersDAO {
 				
 				lista.add(item);
 			}}
-		} catch (ClassNotFoundException | SQLException e) {
+		} catch (ClassNotFoundException | SQLException | NamingException e) {
 			e.printStackTrace();
 		}finally {
 			this.close();	
@@ -501,7 +500,7 @@ public class OrdersDAO {
 				
 				lista.add(item);
 			}}
-		} catch (ClassNotFoundException | SQLException e) {
+		} catch (ClassNotFoundException | SQLException | NamingException e) {
 			e.printStackTrace();
 		}
 		finally {
@@ -530,7 +529,7 @@ public class OrdersDAO {
 				
 				lista.add(item);
 			}}
-		} catch (ClassNotFoundException | SQLException e) {
+		} catch (ClassNotFoundException | SQLException | NamingException e) {
 			e.printStackTrace();
 		}
 		finally {
@@ -555,7 +554,7 @@ public class OrdersDAO {
 				
 				lista.add(item);
 			}
-		} catch (ClassNotFoundException | SQLException e) {
+		} catch (ClassNotFoundException | SQLException | NamingException e) {
 			e.printStackTrace();
 		}
 		finally {
@@ -582,7 +581,7 @@ public class OrdersDAO {
 					
 					lista.add(item);
 			}}
-		} catch (ClassNotFoundException | SQLException e) {
+		} catch (ClassNotFoundException | SQLException | NamingException e) {
 			e.printStackTrace();
 		}
 		finally {
@@ -596,7 +595,7 @@ public class OrdersDAO {
 			preparedStatement=conn.prepareStatement("delete from orders where order_id=?");
 			preparedStatement.setInt(1, id);
 			preparedStatement.execute();
-		} catch (ClassNotFoundException | SQLException e) {
+		} catch (ClassNotFoundException | SQLException | NamingException e) {
 			e.printStackTrace();
 		}
 		finally {
