@@ -5,14 +5,13 @@ import java.sql.Connection;
 
 
 
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-
-import javax.naming.NamingException;
 
 import com.nesovic.Telnet.model.Clients;
 import com.nesovic.Telnet.model.Meal;
@@ -85,9 +84,11 @@ public class OrdersDAO {
 			while(resultSet.next()) {
 				br++;
 			}
-		} catch ( SQLException | ClassNotFoundException | NamingException e) {
+		} catch ( SQLException | ClassNotFoundException e) {
 			e.printStackTrace();
-		}
+		}finally {
+			this.close();
+	}
 		return br;
 	}
 	public ArrayList<Order> selectOrders(){
@@ -110,7 +111,7 @@ public class OrdersDAO {
 				order.setNumberOfElements(lista.size());
 			}
 			
-		} catch (ClassNotFoundException | SQLException | NamingException e) {
+		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
 		finally {
@@ -134,7 +135,7 @@ public class OrdersDAO {
 				
 				lista.add(item);
 			}
-		} catch (ClassNotFoundException | SQLException | NamingException e) {
+		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
 		finally {
@@ -155,7 +156,7 @@ public class OrdersDAO {
 				
 				item=extractOrderFromResultSet(resultSet);
 			}
-		} catch (ClassNotFoundException | SQLException | NamingException e) {
+		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
 		finally {
@@ -182,7 +183,7 @@ public class OrdersDAO {
 			preparedStatement.setBoolean(6, item.isPiece());
 			preparedStatement.setBoolean(7, item.isDisplay());
 			preparedStatement.execute();
-		} catch (ClassNotFoundException | SQLException | NamingException  e) {
+		} catch (ClassNotFoundException | SQLException  e) {
 			e.printStackTrace();
 		}
 		finally {
@@ -227,7 +228,7 @@ public class OrdersDAO {
 			preparedStatement.setBoolean(7, item.isDisplay());
 			preparedStatement.setInt(8, item.getOrder_id());
 			preparedStatement.execute();
-		} catch (ClassNotFoundException | SQLException | NamingException e) {
+		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
 		finally {
@@ -257,7 +258,7 @@ public class OrdersDAO {
 				
 		
 		
-		} }catch (ClassNotFoundException | SQLException | NamingException e) {
+		} }catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
 			finally {
@@ -281,7 +282,7 @@ public class OrdersDAO {
 				
 				lista.add(item);
 			}
-		} catch (ClassNotFoundException | SQLException | NamingException e) {
+		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
 		finally {
@@ -305,7 +306,7 @@ public class OrdersDAO {
 				
 				lista.add(item);
 			}
-		} catch (ClassNotFoundException | SQLException | NamingException e) {
+		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
 		finally {
@@ -333,9 +334,11 @@ public class OrdersDAO {
 			for (Order order : lista) {
 				order.setNumberOfElements(br);
 			}
-		} catch (ClassNotFoundException | SQLException | NamingException e) {
+		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
-		}
+		}finally {
+			this.close();
+	}
 		return lista;
 	}
 	public ArrayList<Order> ScrollOrdersByStartDate(int offset,String date){
@@ -356,7 +359,7 @@ public class OrdersDAO {
 				
 				lista.add(item);
 			}
-		} catch (ClassNotFoundException | SQLException | NamingException e) {
+		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
 		finally {
@@ -382,7 +385,7 @@ public class OrdersDAO {
 				
 				lista.add(item);
 			}
-		} catch (ClassNotFoundException | SQLException | NamingException e) {
+		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
 		finally {
@@ -409,7 +412,7 @@ public class OrdersDAO {
 				
 				lista.add(item);
 			}
-		} catch (ClassNotFoundException | SQLException | NamingException e) {
+		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
 		finally {
@@ -440,7 +443,7 @@ public class OrdersDAO {
 				
 				lista.add(item);
 			}}
-		} catch (ClassNotFoundException | SQLException | NamingException e) {
+		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
 		finally {
@@ -471,7 +474,7 @@ public class OrdersDAO {
 				
 				lista.add(item);
 			}}
-		} catch (ClassNotFoundException | SQLException | NamingException e) {
+		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}finally {
 			this.close();	
@@ -500,7 +503,7 @@ public class OrdersDAO {
 				
 				lista.add(item);
 			}}
-		} catch (ClassNotFoundException | SQLException | NamingException e) {
+		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
 		finally {
@@ -529,7 +532,7 @@ public class OrdersDAO {
 				
 				lista.add(item);
 			}}
-		} catch (ClassNotFoundException | SQLException | NamingException e) {
+		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
 		finally {
@@ -554,7 +557,7 @@ public class OrdersDAO {
 				
 				lista.add(item);
 			}
-		} catch (ClassNotFoundException | SQLException | NamingException e) {
+		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
 		finally {
@@ -581,7 +584,7 @@ public class OrdersDAO {
 					
 					lista.add(item);
 			}}
-		} catch (ClassNotFoundException | SQLException | NamingException e) {
+		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
 		finally {
@@ -595,7 +598,7 @@ public class OrdersDAO {
 			preparedStatement=conn.prepareStatement("delete from orders where order_id=?");
 			preparedStatement.setInt(1, id);
 			preparedStatement.execute();
-		} catch (ClassNotFoundException | SQLException | NamingException e) {
+		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
 		finally {

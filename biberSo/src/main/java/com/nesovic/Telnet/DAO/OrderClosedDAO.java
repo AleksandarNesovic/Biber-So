@@ -43,7 +43,7 @@ public class OrderClosedDAO {
 			preparedStatement.setBoolean(2, status);
 			preparedStatement.execute();
 			
-		} catch (ClassNotFoundException | SQLException | NamingException e) {
+		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
 		finally {
@@ -58,7 +58,7 @@ public class OrderClosedDAO {
 			preparedStatement.setString(2, date);
 			preparedStatement.execute();
 			
-		} catch (ClassNotFoundException | SQLException | NamingException e) {
+		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
 		finally {
@@ -77,7 +77,7 @@ public class OrderClosedDAO {
 			while(resultSet.next()) {
 				status=resultSet.getBoolean(1);
 			}
-		} catch (ClassNotFoundException | SQLException | NamingException e) {
+		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
 		finally {
