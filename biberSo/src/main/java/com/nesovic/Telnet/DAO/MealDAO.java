@@ -94,9 +94,9 @@ public class MealDAO {
 			}
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
-		}finally {
-			this.close();
-		}
+		}//finally {
+//			this.close();
+//		}
 		return br;
 	}
 	public ArrayList<Meal> scrollMeal(int offset){
@@ -121,9 +121,9 @@ public class MealDAO {
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
-		finally {
-			this.close();
-	}
+//		finally {
+//			this.close();
+//	}
 		return lista;
 	}
 	public ArrayList<Meal> selectMealByPrice(){
